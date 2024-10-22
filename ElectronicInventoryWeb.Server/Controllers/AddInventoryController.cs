@@ -39,12 +39,12 @@ public class AddInventoryController : ControllerBase
         _appDbContext.InventoryItems.Add(item);
         await _appDbContext.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetInventoryItem), new { id = item.Id }, item);
+        return Ok(CreatedAtAction(nameof(GetInventoryItem), new { id = item.Id }, item));
     }
 
     [HttpGet("[action]")]
     public async Task<ActionResult<IEnumerable<InventoryItem>>> GetInventoryItems()
     {
-        return await _appDbContext.InventoryItems.ToListAsync();
+        return Ok(await _appDbContext.InventoryItems.ToListAsync());
     }
 }
