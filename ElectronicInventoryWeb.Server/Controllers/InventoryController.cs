@@ -31,7 +31,7 @@ public class InventoryController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public async Task<ActionResult<InventoryItemDto>> AddInventoryItem([FromBody]InventoryItemDto itemDto)
+    public async Task<ActionResult<InventoryItemDto>> AddInventoryItem([FromBody] InventoryItemDto itemDto)
     {
         if (itemDto == null)
         {
@@ -68,5 +68,32 @@ public class InventoryController : ControllerBase
         var itemsList = await _appDbContext.InventoryItems.Where(x => x.UserId == userId).ToListAsync();
 
         return Ok(itemsList.Select(x => x.ToInventoryItemDto()));
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto)
+    {
+        var item = _appDbContext.InventoryItems.FirstOrDefault(x => x.Id == id);
+
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        item.Type = inventoryItemDto.Type;
+        item.Symbol = inventoryItemDto.Symbol;
+        item.Category = inventoryItemDto.Category;
+        item.Value = inventoryItemDto.Value;
+        item.Package = inventoryItemDto.Package;
+        item.Quantity = inventoryItemDto.Quantity;
+        item.DatasheetLink = inventoryItemDto.DatasheetLink;
+        item.StoreLink = inventoryItemDto.StoreLink;
+        item.Description = inventoryItemDto.Description;
+        
+
+        await _appDbContext.SaveChangesAsync();
+
+        return Ok(item.ToInventoryItemDto());
     }
 }
