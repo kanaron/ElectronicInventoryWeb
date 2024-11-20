@@ -16,10 +16,16 @@ public static class InventoryMappers
             Value = item.Value,
             Package = item.Package,
             Quantity = item.Quantity,
+            Location = item.Location,
             DatasheetLink = item.DatasheetLink,
             StoreLink = item.StoreLink,
+            PhotoUrl = item.PhotoUrl,
+            MinStockLevel = item.MinStockLevel,
             Description = item.Description,
-            DateAdded = item.DateAdded
+            IsActive = item.IsActive,
+            Tags = item.Tags,
+            DateAdded = item.DateAdded,
+            LastUpdated = item.LastUpdated
         };
     }
 
@@ -34,10 +40,16 @@ public static class InventoryMappers
             Value = item.Value,
             Package = item.Package,
             Quantity = item.Quantity,
+            Location = item.Location,
             DatasheetLink = item.DatasheetLink,
             StoreLink = item.StoreLink,
+            PhotoUrl = item.PhotoUrl,
+            MinStockLevel = item.MinStockLevel,
             Description = item.Description,
-            DateAdded = item.DateAdded
+            IsActive = item.IsActive,
+            Tags = item.Tags,
+            DateAdded = item.DateAdded,
+            LastUpdated = item.LastUpdated
         };
     }
 }
