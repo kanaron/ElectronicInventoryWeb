@@ -17,6 +17,6 @@ public class InventoryItemDto
     public string? Description { get; set; }
     public bool IsActive { get; set; } = true;
     public string[]? Tags { get; set; } = Array.Empty<string>();
-    public DateTime DateAdded { get; set; }
-    public DateTime LastUpdated { get; set; }
+    public DateTime DateAdded { get; set; } = DateTime.Now;
+    public DateTime LastUpdated { get; set; } = DateTime.Now;
 }
