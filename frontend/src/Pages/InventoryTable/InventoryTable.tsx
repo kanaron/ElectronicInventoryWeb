@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const InventoryTable: React.FC = () => {
   // Example data
@@ -21,45 +22,12 @@ const InventoryTable: React.FC = () => {
     },
   ];
 
-  const handleAddItem = async (item: any) => {
-    try {
-      const response = await fetch("/api/addinventory", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
-      });
-
-      // if (response.ok) {
-      //   const newItem = await response.json();
-      //   setInventoryItems((prevItems) => [...prevItems, newItem]);
-      //   setShowForm(false); // Close the form after adding the item
-      // } else {
-      //   console.error("Failed to add item:", response.statusText);
-      // }
-    } catch (error) {
-      console.error("Error adding item:", error);
-    }
-  };
-
-  const handleAddItemFromTME = () => {
-    // Logic to add an item from TME
-    console.log("Add item from TME clicked");
-  };
-
   return (
     <div className="inventory-table-container">
       <div className="table-controls">
-        <button onClick={handleAddItem} className="add-item-button">
-          Add Item
-        </button>
-        <button
-          onClick={handleAddItemFromTME}
-          className="add-item-from-tme-button"
-        >
-          Add Item from TME
-        </button>
+        <Link to="/addItem" className="add-item-button">
+          Add item
+        </Link>
       </div>
       <table className="inventory-table">
         <thead>

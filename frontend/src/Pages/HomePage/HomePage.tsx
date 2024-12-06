@@ -5,6 +5,7 @@ import SideNav from "../../components/SideNav/SideNav";
 import RegisterForm from "../RegisterForm/RegisterForm";
 import LoginForm from "../LoginForm/LoginForm";
 import InventoryTable from "../InventoryTable/InventoryTable";
+import AddItemForm from "../AddItemForm/AddItemForm";
 
 interface Props {}
 
@@ -23,6 +24,7 @@ const HomePage = (props: Props) => {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/inventory" element={<InventoryTable />} />
+              <Route path="/addItem" element={<AddItemForm />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

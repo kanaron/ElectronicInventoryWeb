@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    login: "",
     password: "",
   });
 
@@ -24,10 +24,10 @@ const LoginForm: React.FC = () => {
     <form className="form-container" onSubmit={handleSubmit}>
       <h2>Login</h2>
       <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
+        type="login"
+        name="login"
+        placeholder="Login"
+        value={formData.login}
         onChange={handleChange}
       />
       <input
