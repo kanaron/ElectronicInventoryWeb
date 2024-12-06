@@ -20,18 +20,13 @@ public class DeleteInventoryItem
             _appDbContext = context;
         }
 
-        public async Task<InventoryItem?> Handle(Command request, CancellationToken cancellationToken)
-        {
-            return await _appDbContext.InventoryItems.FindAsync(request.ItemId);
-        }
-
         async Task IRequestHandler<Command>.Handle(Command request, CancellationToken cancellationToken)
         {
-            var itemToDelete = _appDbContext.InventoryItems.FindAsync(request.ItemId).Result;
+            var itemToDelete = (await _appDbContext.InventoryItems.FindAsync([request.ItemId], cancellationToken: cancellationToken));
 
             _appDbContext.Remove(itemToDelete);
 
-            await _appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

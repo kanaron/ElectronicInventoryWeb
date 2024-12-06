@@ -24,7 +24,7 @@ public class EditInventoryItem
 
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            var itemToEdit = _appDbContext.InventoryItems.FindAsync(request.ItemId).Result;
+            var itemToEdit = (await _appDbContext.InventoryItems.FindAsync([request.ItemId], cancellationToken: cancellationToken));
 
             if (itemToEdit == null)
             {
@@ -46,7 +46,7 @@ public class EditInventoryItem
             itemToEdit.IsActive = request.ItemDto.IsActive;
             itemToEdit.Tags = request.ItemDto.Tags;
 
-            await _appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

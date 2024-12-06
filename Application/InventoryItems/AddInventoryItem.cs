@@ -25,7 +25,7 @@ public class AddInventoryItem
         {
             _appDbContext.InventoryItems.Add(request.Item);
 
-            await _appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

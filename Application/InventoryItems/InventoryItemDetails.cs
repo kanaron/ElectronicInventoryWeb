@@ -24,7 +24,7 @@ public class InventoryItemDetails
 
         public async Task<InventoryItem?> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await _appDbContext.InventoryItems.FindAsync(request.ItemId);
+            return await _appDbContext.InventoryItems.FindAsync([request.ItemId], cancellationToken: cancellationToken);
         }
     }
 }

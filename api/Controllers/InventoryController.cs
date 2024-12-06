@@ -16,7 +16,7 @@ public class InventoryController : BaseApiController
     }
 
     [HttpGet("[action]")]
-    public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems()
+    public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems(CancellationToken cancellationToken)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
@@ -25,11 +25,11 @@ public class InventoryController : BaseApiController
             return Unauthorized("User ID not found in token");
         }
 
-        return (await Mediator.Send(new InventoryItemList.Query { UserId = userId }));
+        return await Mediator.Send(new InventoryItemList.Query { UserId = userId }, cancellationToken);
     }
 
     [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<InventoryItemDto>> GetInventoryItem(int id)
+    public async Task<ActionResult<InventoryItemDto>> GetInventoryItem(int id, CancellationToken cancellationToken)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
@@ -38,7 +38,7 @@ public class InventoryController : BaseApiController
             return Unauthorized("User ID not found in token");
         }
 
-        var item = await Mediator.Send(new InventoryItemDetails.Query { ItemId = id });
+        var item = await Mediator.Send(new InventoryItemDetails.Query { ItemId = id }, cancellationToken);
 
         if (item == null)
         {
@@ -53,7 +53,7 @@ public class InventoryController : BaseApiController
     }
 
     [HttpPost("[action]")]
-    public async Task<ActionResult<InventoryItemDto>> AddInventoryItem([FromBody] InventoryItemDto itemDto)
+    public async Task<ActionResult<InventoryItemDto>> AddInventoryItem([FromBody] InventoryItemDto itemDto, CancellationToken cancellationToken)
     {
         if (itemDto == null)
         {
@@ -70,7 +70,7 @@ public class InventoryController : BaseApiController
 
         item.UserId = userId;
 
-        await Mediator.Send(new AddInventoryItem.Command { Item = item });
+        await Mediator.Send(new AddInventoryItem.Command { Item = item }, cancellationToken);
 
         var savedItem = item.ToInventoryItemDto();
 
@@ -79,18 +79,18 @@ public class InventoryController : BaseApiController
 
     [HttpPut]
     [Route("{id}")]
-    public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto)
+    public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new EditInventoryItem.Command { ItemDto = inventoryItemDto, ItemId = id });
+        await Mediator.Send(new EditInventoryItem.Command { ItemDto = inventoryItemDto, ItemId = id }, cancellationToken);
 
         return Ok();
     }
 
     [HttpDelete]
     [Route("{id}")]
-    public async Task<ActionResult> DeleteInventoryItem([FromRoute] int id)
+    public async Task<ActionResult> DeleteInventoryItem([FromRoute] int id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new DeleteInventoryItem.Command { ItemId = id });
+        await Mediator.Send(new DeleteInventoryItem.Command { ItemId = id }, cancellationToken);
 
         return Ok();
     }
