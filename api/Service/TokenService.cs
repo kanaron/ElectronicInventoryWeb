@@ -1,10 +1,10 @@
-﻿using ElectronicInventoryWeb.Server.Data;
-using ElectronicInventoryWeb.Server.Interfaces;
+﻿using API.Interfaces;
+using Domain.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace ElectronicInventoryWeb.Server.Service;
+namespace API.Service;
 
 public class TokenService : ITokenService
 {

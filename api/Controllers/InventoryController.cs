@@ -1,33 +1,52 @@
-﻿using ElectronicInventoryWeb.Server.Data;
-using ElectronicInventoryWeb.Server.Dto;
-using ElectronicInventoryWeb.Server.Mappers;
-using ElectronicInventoryWeb.Server.Service;
+﻿using API.Service;
+using Application.InventoryItems;
+using Domain.Dto;
+using Domain.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace ElectronicInventoryWeb.Server.Controllers;
+namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class InventoryController : ControllerBase
+public class InventoryController : BaseApiController
 {
-    private readonly AppDbContext _appDbContext;
     private readonly TmeApiService _tmeApiService;
 
-    public InventoryController(AppDbContext appDbContext, TmeApiService tmeApiService)
+    public InventoryController(TmeApiService tmeApiService)
     {
-        _appDbContext = appDbContext;
         _tmeApiService = tmeApiService;
+    }
+
+    [HttpGet("[action]")]
+    public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems()
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID not found in token");
+        }
+
+        return (await Mediator.Send(new InventoryItemList.Query { UserId = userId }));
     }
 
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<InventoryItemDto>> GetInventoryItem(int id)
     {
-        var item = await _appDbContext.InventoryItems.FindAsync(id);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID not found in token");
+        }
+
+        var item = await Mediator.Send(new InventoryItemDetails.Query { ItemId = id });
 
         if (item == null)
         {
             return NotFound();
+        }
+        else if (item.UserId != userId)
+        {
+            return Unauthorized("Accessing item of different user");
         }
 
         return Ok(item.ToInventoryItemDto());
@@ -42,7 +61,6 @@ public class InventoryController : ControllerBase
         }
 
         var item = itemDto.ToInventoryItem();
-
         var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
         if (string.IsNullOrEmpty(userId))
@@ -52,54 +70,29 @@ public class InventoryController : ControllerBase
 
         item.UserId = userId;
 
-        _appDbContext.InventoryItems.Add(item);
-        await _appDbContext.SaveChangesAsync();
+        await Mediator.Send(new AddInventoryItem.Command { Item = item });
 
         var savedItem = item.ToInventoryItemDto();
 
         return Ok(CreatedAtAction(nameof(AddInventoryItem), new { id = savedItem.Id }, savedItem));
     }
 
-    [HttpGet("[action]")]
-    public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems()
-    {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized("User ID not found in token");
-        }
-
-        var itemsList = await _appDbContext.InventoryItems.Where(x => x.UserId == userId).ToListAsync();
-
-        return Ok(itemsList.Select(x => x.ToInventoryItemDto()));
-    }
-
     [HttpPut]
     [Route("{id}")]
     public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto)
     {
-        var item = _appDbContext.InventoryItems.FirstOrDefault(x => x.Id == id);
+        await Mediator.Send(new EditInventoryItem.Command { ItemDto = inventoryItemDto, ItemId = id });
 
-        if (item == null)
-        {
-            return NotFound();
-        }
+        return Ok();
+    }
 
-        item.Type = inventoryItemDto.Type;
-        item.Symbol = inventoryItemDto.Symbol;
-        item.Category = inventoryItemDto.Category;
-        item.Value = inventoryItemDto.Value;
-        item.Package = inventoryItemDto.Package;
-        item.Quantity = inventoryItemDto.Quantity;
-        item.DatasheetLink = inventoryItemDto.DatasheetLink;
-        item.StoreLink = inventoryItemDto.StoreLink;
-        item.Description = inventoryItemDto.Description;
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<ActionResult> DeleteInventoryItem([FromRoute] int id)
+    {
+        await Mediator.Send(new DeleteInventoryItem.Command { ItemId = id });
 
-
-        await _appDbContext.SaveChangesAsync();
-
-        return Ok(item.ToInventoryItemDto());
+        return Ok();
     }
 
     [HttpGet("FetchFromTme")]

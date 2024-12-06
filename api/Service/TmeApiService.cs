@@ -2,13 +2,13 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using ElectronicInventoryWeb.Server.TmeModels;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
-using ElectronicInventoryWeb.Server.TmeJResults;
+using Domain.TmeJResults;
+using Domain.TmeModels;
 
-namespace ElectronicInventoryWeb.Server.Service;
+namespace API.Service;
 
 public class TmeApiService
 {

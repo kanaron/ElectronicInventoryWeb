@@ -1,4 +1,4 @@
-﻿namespace ElectronicInventoryWeb.Server.Models;
+﻿namespace API.Models;
 
 public class NewUser
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ElectronicInventoryWeb.Server.Models;
+namespace API.Models;
 
 public class LoginModel
 {

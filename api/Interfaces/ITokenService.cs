@@ -1,6 +1,6 @@
-﻿using ElectronicInventoryWeb.Server.Data;
+﻿using Domain.Data;
 
-namespace ElectronicInventoryWeb.Server.Interfaces;
+namespace API.Interfaces;
 
 public interface ITokenService
 {

@@ -80,6 +80,32 @@ const AddItemForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    try {
+      const response = axios.post(
+        "https://localhost:7000/api/Inventory/AddInventoryItem",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error: any) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          alert("Bad request: " + error.response.data);
+        } else if (error.response.status === 401) {
+          alert("Unauthorized: Please log in again.");
+        } else {
+          alert(
+            "Error: " + error.response.data || "An unknown error occurred."
+          );
+        }
+      } else {
+        alert("Unable to reach the server. Please try again later.");
+      }
+    }
   };
 
   return (
@@ -170,7 +196,7 @@ const AddItemForm: React.FC = () => {
         <label>
           Datasheet Link:
           <input
-            type="url"
+            type="text"
             name="datasheetLink"
             value={formData.datasheetLink}
             onChange={handleChange}
@@ -181,7 +207,7 @@ const AddItemForm: React.FC = () => {
         <label>
           Store Link:
           <input
-            type="url"
+            type="text"
             name="storeLink"
             value={formData.storeLink}
             onChange={handleChange}
@@ -192,7 +218,7 @@ const AddItemForm: React.FC = () => {
         <label>
           Photo URL:
           <input
-            type="url"
+            type="text"
             name="photoUrl"
             value={formData.photoUrl}
             onChange={handleChange}

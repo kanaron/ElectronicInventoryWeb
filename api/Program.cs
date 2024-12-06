@@ -1,11 +1,13 @@
-using ElectronicInventoryWeb.Server.Data;
-using ElectronicInventoryWeb.Server.Interfaces;
-using ElectronicInventoryWeb.Server.Service;
+using API.Interfaces;
+using API.Service;
+using Application.InventoryItems;
+using Domain.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,8 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
     });
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(InventoryItemList.Handler).Assembly));
 
 builder.Services.AddAuthentication(options =>
 {
