@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Segment } from "semantic-ui-react";
 import { InventoryItem } from "../../models/InventoryItem";
-import axios from "axios";
 import InventoryItemList from "./InventoryItemList";
 import ItemDetailsCard from "./ItemDetailsCard";
+import agent from "../../app/agent";
+import LoadingComponent from "../../mainComponents/LoadingComponent";
 
 const InventoryPage: React.FC = () => {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>();
   const [mode, setMode] = useState<"create" | "edit" | "details">("create");
   const [showCard, setShowCard] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get<InventoryItem[]>(
-        "https://localhost:7000/api/Inventory/GetInventoryItems"
-      )
-      .then((response) => {
-        setInventoryItems(response.data);
+    agent.InventoryItems.list().then((response) => {
+      let inventoryItems: InventoryItem[] = [];
+      response.forEach((item) => {
+        item.dateAdded = item.dateAdded.split("T")[0];
+        item.lastUpdated = item.lastUpdated.split("T")[0];
+        inventoryItems.push(item);
       });
+      setInventoryItems(inventoryItems);
+      setLoading(false);
+    });
   }, []);
 
   const handleCreate = () => {
@@ -46,6 +51,8 @@ const InventoryPage: React.FC = () => {
     setShowCard(false);
   };
 
+  if (loading) return <LoadingComponent content="Loading data" />;
+
   return (
     <Segment clearing>
       <Grid>
@@ -61,6 +68,7 @@ const InventoryPage: React.FC = () => {
           <Button
             content="Add item"
             primary
+            fluid
             style={{ marginBottom: "1rem" }}
             onClick={handleCreate}
           />

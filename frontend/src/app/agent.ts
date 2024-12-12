@@ -4,28 +4,28 @@ import { User, UserFormValues } from "../models/User";
 
 axios.defaults.baseURL = "https://localhost:7000/api";
 
-const responseBody = (response: AxiosResponse) => response.data;
+const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
-const request = {
-  get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
-  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-  del: (url: string) => axios.delete(url).then(responseBody),
+const requests = {
+  get: <T>(url: string) => axios.get<T>(url).then(responseBody),
+  post: <T>(url: string, body: {}) =>
+    axios.post<T>(url, body).then(responseBody),
+  put: <T>(url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
+  del: <T>(url: string) => axios.delete<T>(url).then(responseBody),
 };
 
 const InventoryItems = {
-  list: () => axios.get<InventoryItem[]>("/Inventory/GetInventoryItems"),
+  list: () => requests.get<InventoryItem[]>("/Inventory/GetInventoryItems"),
   details: (id: string) =>
-    axios.get<InventoryItem>(`/Inventory/GetInventoryItem/${id}`),
+    requests.get<InventoryItem>(`/Inventory/GetInventoryItem/${id}`),
   create: (inventoryItem: InventoryItem) =>
-    axios.post<void>(`/Inventory/AddInventoryItem`, inventoryItem),
+    axios.post(`/Inventory/AddInventoryItem`, inventoryItem),
   update: (inventoryItem: InventoryItem) =>
-    axios.post<void>(
+    axios.post(
       `/Inventory/UpdateInventoryItem/${inventoryItem.id}`,
       inventoryItem
     ),
-  delete: (id: string) =>
-    axios.delete<void>(`/Inventory/DeleteInventoryItem/${id}`),
+  delete: (id: string) => axios.delete(`/Inventory/DeleteInventoryItem/${id}`),
 };
 
 const Account = {

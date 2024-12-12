@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CheckboxProps, Form, Image } from "semantic-ui-react";
 import { InventoryItem } from "../../models/InventoryItem";
 import axios from "axios";
+import LoadingComponent from "../../mainComponents/LoadingComponent";
+import agent from "../../app/agent";
 
 interface ItemDetailsFormProps {
   itemId?: number;
@@ -37,6 +39,8 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
       lastUpdated: new Date().toISOString(),
     }
   );
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (itemId && existingItem) {
@@ -79,6 +83,8 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
   };
 
   const handleFetchFromTme = async () => {
+    setLoading(true);
+
     if (formData.symbol.trim() === "") {
       alert("Please enter a symbol to fetch data from TME.");
       return;
@@ -112,6 +118,8 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
       } else {
         alert(`Error: ${error.message}`);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,20 +128,11 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
       e.preventDefault();
 
       try {
-        const url = itemId
-          ? `https://localhost:7000/api/Inventory/UpdateInventoryItem/${itemId}`
-          : `https://localhost:7000/api/Inventory/AddInventoryItem`;
-
-        const method = itemId ? "put" : "post";
-
-        await axios({
-          method,
-          url,
-          data: formData,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        if (itemId) {
+          agent.InventoryItems.update(formData);
+        } else {
+          agent.InventoryItems.create(formData);
+        }
 
         alert(
           itemId ? "Item updated successfully!" : "Item added successfully!"
@@ -155,8 +154,11 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
   };
 
   return (
-    <Card style={{ width: "100%", padding: "20px" }}>
-      {formData.photoUrl && <Image src={formData?.photoUrl} size="small" />}
+    <Card style={{ width: "100%", padding: "8px" }}>
+      {loading && <LoadingComponent content="Fetching data" />}
+      {formData.photoUrl && (
+        <Image src={formData?.photoUrl} size="small" centered />
+      )}
       <Card.Content>
         <Card.Header>
           {mode === "create"
@@ -166,9 +168,7 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
             : `Details of item with symbol ${existingItem?.symbol}`}
         </Card.Header>
         <Form>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <Form.Input
                 label="Symbol"
@@ -326,6 +326,26 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               onChange={handleCheckboxChange}
               readOnly={mode === "details"}
             />
+
+            {mode === "details" && (
+              <Form.Input
+                type="date"
+                label="Date added"
+                name="dateAdded"
+                value={formData.dateAdded}
+                readOnly={true}
+              />
+            )}
+
+            {mode === "details" && (
+              <Form.Input
+                type="date"
+                label="Last updated"
+                name="lastUpdated"
+                value={formData.lastUpdated}
+                readOnly={true}
+              />
+            )}
 
             <Button primary type="submit" onClick={handleSubmit}>
               {mode === "create" || mode === "edit" ? "Save" : "Close"}
