@@ -1,13 +1,17 @@
 ﻿using API.Interfaces;
 using API.Models;
 using Domain.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
-public class AccountController : BaseApiController
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController : ControllerBase
 {
     private readonly UserManager<User> userManager;
     private readonly ITokenService tokenService;
@@ -20,11 +24,17 @@ public class AccountController : BaseApiController
         signInManager = _signInManager;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    public async Task<ActionResult<LoginModel>> Register([FromBody] RegisterModel model)
     {
         try
         {
+            if (await userManager.Users.AnyAsync(x => x.UserName == model.UserName))
+            {
+                return BadRequest("User already taken");
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -51,8 +61,9 @@ public class AccountController : BaseApiController
         }
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<ActionResult<LoginModel>> Login([FromBody] LoginModel model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -72,5 +83,19 @@ public class AccountController : BaseApiController
             });
 
         return Unauthorized(new { Message = "Invalid login attempt" });
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<LoginModel>> GetCurrentUser()
+    {
+        var user = await userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+        return Ok(new NewUser
+        {
+            UserName = user.UserName,
+            Email = user.Email,
+            Token = tokenService.CreateToken(user)
+        });
     }
 }

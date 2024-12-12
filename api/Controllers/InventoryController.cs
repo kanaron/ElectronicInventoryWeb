@@ -2,6 +2,7 @@
 using Application.InventoryItems;
 using Domain.Dto;
 using Domain.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -15,10 +16,11 @@ public class InventoryController : BaseApiController
         _tmeApiService = tmeApiService;
     }
 
+    [AllowAnonymous]
     [HttpGet("[action]")]
     public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems(CancellationToken cancellationToken)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var userId = "2b293426-e048-46d6-8be3-faa84664a642";// User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -78,7 +80,7 @@ public class InventoryController : BaseApiController
     }
 
     [HttpPut]
-    [Route("{id}")]
+    [Route("[action]/{id}")]
     public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto, CancellationToken cancellationToken)
     {
         await Mediator.Send(new EditInventoryItem.Command { ItemDto = inventoryItemDto, ItemId = id }, cancellationToken);
@@ -87,7 +89,7 @@ public class InventoryController : BaseApiController
     }
 
     [HttpDelete]
-    [Route("{id}")]
+    [Route("[action]/{id}")]
     public async Task<ActionResult> DeleteInventoryItem([FromRoute] int id, CancellationToken cancellationToken)
     {
         await Mediator.Send(new DeleteInventoryItem.Command { ItemId = id }, cancellationToken);
@@ -95,6 +97,7 @@ public class InventoryController : BaseApiController
         return Ok();
     }
 
+    [AllowAnonymous]
     [HttpGet("FetchFromTme")]
     public async Task<ActionResult<InventoryItemDto>> FetchFromTme([FromQuery] string symbol)
     {

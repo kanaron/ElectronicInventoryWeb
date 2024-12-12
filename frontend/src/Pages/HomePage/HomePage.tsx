@@ -1,11 +1,7 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import NavBar from "../../components/NavBar/NavBar";
-import SideNav from "../../components/SideNav/SideNav";
-import RegisterForm from "../RegisterForm/RegisterForm";
-import LoginForm from "../LoginForm/LoginForm";
-import InventoryTable from "../InventoryTable/InventoryTable";
-import AddItemForm from "../AddItemForm/AddItemForm";
+import React, { Fragment, useState } from "react";
+import NavBar from "../../mainComponents/NavBar";
+import { Container } from "semantic-ui-react";
+import InventoryPage from "../Inventory/InventoryPage";
 
 interface Props {}
 
@@ -14,23 +10,12 @@ const HomePage = (props: Props) => {
   const [username, setUsername] = useState("User");
 
   return (
-    <Router>
-      <div className="app-container">
-        <NavBar loggedIn={loggedIn} username={username} />
-        <div className="main-layout">
-          <SideNav />
-          <div className="content">
-            <Routes>
-              <Route path="/register" element={<RegisterForm />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/inventory" element={<InventoryTable />} />
-              <Route path="/addItem" element={<AddItemForm />} />
-              {/* Add more routes as needed */}
-            </Routes>
-          </div>
-        </div>
-      </div>
-    </Router>
+    <Fragment>
+      <NavBar loggedIn={loggedIn} username={username} />
+      <Container style={{ marginTop: "7em" }}>
+        <InventoryPage />
+      </Container>
+    </Fragment>
   );
 };
 
