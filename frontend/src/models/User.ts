@@ -5,8 +5,7 @@ export interface User {
 }
 
 export interface UserFormValues {
-  login: string;
+  userName: string;
   password: string;
   displayName?: string;
-  userName?: string;
 }
