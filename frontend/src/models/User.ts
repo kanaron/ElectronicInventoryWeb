@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface UserFormValues {
-  email: string;
+  login: string;
   password: string;
   displayName?: string;
   userName?: string;

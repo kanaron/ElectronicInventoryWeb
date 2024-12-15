@@ -29,10 +29,10 @@ const InventoryItems = {
 };
 
 const Account = {
-  current: () => axios.get<User>("/Account"),
-  login: (user: UserFormValues) => axios.post<User>("/Account/Login", user),
+  current: () => requests.get<User>("/Account"),
+  login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
   register: (user: UserFormValues) =>
-    axios.post<User>("/Account/Register", user),
+    requests.post<User>("/Account/Register", user),
 };
 
 const agent = {

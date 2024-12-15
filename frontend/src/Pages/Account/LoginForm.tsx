@@ -1,6 +1,11 @@
+import { Form, Formik } from "formik";
 import React, { useState } from "react";
+import { Button, FormInput } from "semantic-ui-react";
+import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-const LoginForm: React.FC = () => {
+export default observer(function LoginForm() {
+  const { userStore } = useStore();
   const [formData, setFormData] = useState({
     login: "",
     password: "",
@@ -21,25 +26,19 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <input
-        type="login"
-        name="login"
-        placeholder="Login"
-        value={formData.login}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <Formik
+      initialValues={{ login: "", password: "" }}
+      onSubmit={(values) => userStore.login(values)}
+    >
+      {({ handleSubmit, isSubmitting }) => (
+        <Form onSubmit={handleSubmit} autoComplete="off">
+          <FormInput label="Login" name="login" />
+          <FormInput label="Password" name="password" />
+          <Button loading={isSubmitting} positive type="submit" fluid>
+            Login
+          </Button>
+        </Form>
+      )}
+    </Formik>
   );
-};
-
-export default LoginForm;
+});

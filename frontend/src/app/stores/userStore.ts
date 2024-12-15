@@ -1,3 +1,4 @@
+import { makeAutoObservable } from "mobx";
 import { User, UserFormValues } from "../../models/User";
 import agent from "../agent";
 
@@ -5,7 +6,7 @@ export default class UserStore {
   user: User | null = null;
 
   constructor() {
-    //makeAutoObservable(this);
+    makeAutoObservable(this);
   }
 
   get isLoggedIn() {
