@@ -4,6 +4,7 @@ import { InventoryItem } from "../../models/InventoryItem";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
 import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 const ItemDetailsCard: React.FC = () => {
   const { inventoryStore } = useStore();
@@ -102,28 +103,7 @@ const ItemDetailsCard: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      if (inventoryStore.editMode) {
-        agent.InventoryItems.update(formData);
-      } else {
-        agent.InventoryItems.create(formData);
-      }
-
-      alert(
-        inventoryStore.editMode
-          ? "Item updated successfully!"
-          : "Item added successfully!"
-      );
-    } catch (error: any) {
-      if (error.response) {
-        alert("Error: " + error.response.data || "An unknown error occurred.");
-      } else {
-        alert("Unable to reach the server. Please try again later.");
-      }
-    } finally {
-    }
+    inventoryStore.addOrUpdateItem(formData);
   };
 
   return (
@@ -259,4 +239,4 @@ const ItemDetailsCard: React.FC = () => {
   );
 };
 
-export default ItemDetailsCard;
+export default observer(ItemDetailsCard);

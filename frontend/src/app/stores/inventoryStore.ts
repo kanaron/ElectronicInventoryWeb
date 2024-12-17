@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { InventoryItem } from "../../models/InventoryItem";
 import agent from "../agent";
 
@@ -57,5 +57,26 @@ export default class InventoryStore {
   closeForm = () => {
     this.cancelSelectedItem();
     this.editMode = false;
+  };
+
+  addOrUpdateItem = async (item: InventoryItem) => {
+    this.loading = true;
+    try {
+      this.editMode
+        ? await agent.InventoryItems.update(item)
+        : await agent.InventoryItems.create(item);
+      runInAction(() => {
+        if (this.editMode) {
+          this.items.filter((x) => x.id !== item.id);
+        }
+        this.items.push(item);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
   };
 }
