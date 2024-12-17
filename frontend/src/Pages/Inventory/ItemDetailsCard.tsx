@@ -4,22 +4,13 @@ import { InventoryItem } from "../../models/InventoryItem";
 import axios from "axios";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
+import { useStore } from "../../app/stores/store";
 
-interface ItemDetailsFormProps {
-  itemId?: number;
-  existingItem?: InventoryItem | null | undefined;
-  mode: "create" | "edit" | "details";
-  onClose: () => void;
-}
+const ItemDetailsCard: React.FC = () => {
+  const { inventoryStore } = useStore();
 
-const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
-  itemId,
-  existingItem,
-  mode,
-  onClose,
-}) => {
   const [formData, setFormData] = useState<InventoryItem>(
-    existingItem || {
+    inventoryStore.selectedItem || {
       id: 0,
       type: "",
       symbol: "",
@@ -40,27 +31,17 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
     }
   );
 
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (itemId && existingItem) {
-      setFormData(existingItem);
-    }
-  }, [itemId, existingItem]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (mode !== "details") {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]:
-          name === "quantity" || name === "minStockLevel"
-            ? parseInt(value, 10)
-            : value,
-      }));
-    }
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "quantity" || name === "minStockLevel"
+          ? parseInt(value, 10)
+          : value,
+    }));
   };
 
   const handleCheckboxChange = (
@@ -83,7 +64,7 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
   };
 
   const handleFetchFromTme = async () => {
-    setLoading(true);
+    inventoryStore.setLoading(true);
 
     if (formData.symbol.trim() === "") {
       alert("Please enter a symbol to fetch data from TME.");
@@ -119,53 +100,46 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
         alert(`Error: ${error.message}`);
       }
     } finally {
-      setLoading(false);
+      inventoryStore.setLoading(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (mode === "create" || mode === "edit") {
-      e.preventDefault();
+    e.preventDefault();
 
-      try {
-        if (itemId) {
-          agent.InventoryItems.update(formData);
-        } else {
-          agent.InventoryItems.create(formData);
-        }
-
-        alert(
-          itemId ? "Item updated successfully!" : "Item added successfully!"
-        );
-      } catch (error: any) {
-        if (error.response) {
-          alert(
-            "Error: " + error.response.data || "An unknown error occurred."
-          );
-        } else {
-          alert("Unable to reach the server. Please try again later.");
-        }
-      } finally {
-        onClose?.();
+    try {
+      if (inventoryStore.editMode) {
+        agent.InventoryItems.update(formData);
+      } else {
+        agent.InventoryItems.create(formData);
       }
-    } else {
-      onClose?.();
+
+      alert(
+        inventoryStore.editMode
+          ? "Item updated successfully!"
+          : "Item added successfully!"
+      );
+    } catch (error: any) {
+      if (error.response) {
+        alert("Error: " + error.response.data || "An unknown error occurred.");
+      } else {
+        alert("Unable to reach the server. Please try again later.");
+      }
+    } finally {
     }
   };
 
   return (
     <Card style={{ width: "100%", padding: "8px" }}>
-      {loading && <LoadingComponent content="Fetching data" />}
+      {inventoryStore.loading && <LoadingComponent content="Fetching data" />}
       {formData.photoUrl && (
         <Image src={formData?.photoUrl} size="small" centered />
       )}
       <Card.Content>
         <Card.Header>
-          {mode === "create"
-            ? "Add New Item"
-            : mode === "edit"
-            ? `Edit item with symbol ${existingItem?.symbol}`
-            : `Details of item with symbol ${existingItem?.symbol}`}
+          {inventoryStore.editMode
+            ? `Edit item with symbol ${inventoryStore.selectedItem?.symbol}`
+            : "Add New Item"}
         </Card.Header>
         <Form>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
@@ -175,17 +149,14 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
                 name="symbol"
                 value={formData.symbol}
                 onChange={handleChange}
-                readOnly={mode === "details"}
-                required={mode === "create" || mode === "edit"}
+                required={true}
               />
-              {(mode === "create" || mode === "edit") && (
-                <Button
-                  content="Fetch from TME"
-                  onClick={handleFetchFromTme}
-                  style={{ margin: 8 }}
-                  disabled={!formData.symbol.trim()}
-                />
-              )}
+              <Button
+                content="Fetch from TME"
+                onClick={handleFetchFromTme}
+                style={{ margin: 8 }}
+                disabled={!formData.symbol.trim()}
+              />
             </div>
 
             <Form.Input
@@ -193,7 +164,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="type"
               value={formData.type}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -201,7 +171,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="category"
               value={formData.category}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -209,7 +178,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="value"
               value={formData.value}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -217,7 +185,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="package"
               value={formData.package}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -226,7 +193,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="quantity"
               value={formData.quantity}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -234,65 +200,28 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="location"
               value={formData.location}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
-            {mode === "details" && existingItem?.datasheetLink ? (
-              <p>
-                <a
-                  href={existingItem.datasheetLink}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View datasheet
-                </a>
-              </p>
-            ) : (
-              <Form.Input
-                label="Datasheet link"
-                name="datasheetLink"
-                value={formData.datasheetLink}
-                onChange={handleChange}
-              />
-            )}
+            <Form.Input
+              label="Datasheet link"
+              name="datasheetLink"
+              value={formData.datasheetLink}
+              onChange={handleChange}
+            />
 
-            {mode === "details" && existingItem?.storeLink ? (
-              <p>
-                <a
-                  href={existingItem.storeLink}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View store link
-                </a>
-              </p>
-            ) : (
-              <Form.Input
-                label="Store link"
-                name="storeLink"
-                value={formData.storeLink}
-                onChange={handleChange}
-              />
-            )}
+            <Form.Input
+              label="Store link"
+              name="storeLink"
+              value={formData.storeLink}
+              onChange={handleChange}
+            />
 
-            {mode === "details" && existingItem?.photoUrl ? (
-              <p>
-                <a
-                  href={existingItem.photoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Photo url
-                </a>
-              </p>
-            ) : (
-              <Form.Input
-                label="Photo url"
-                name="photoUrl"
-                value={formData.photoUrl}
-                onChange={handleChange}
-              />
-            )}
+            <Form.Input
+              label="Photo url"
+              name="photoUrl"
+              value={formData.photoUrl}
+              onChange={handleChange}
+            />
 
             <Form.Input
               label="Min stock level"
@@ -300,7 +229,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="minStockLevel"
               value={formData.minStockLevel}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.TextArea
@@ -308,7 +236,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="description"
               value={formData.description}
               onChange={handleChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Input
@@ -316,7 +243,6 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="tags"
               value={formData.tags}
               onChange={handleTagsChange}
-              readOnly={mode === "details"}
             />
 
             <Form.Checkbox
@@ -324,31 +250,10 @@ const ItemDetailsCard: React.FC<ItemDetailsFormProps> = ({
               name="isActive"
               checked={formData.isActive}
               onChange={handleCheckboxChange}
-              readOnly={mode === "details"}
             />
 
-            {mode === "details" && (
-              <Form.Input
-                type="date"
-                label="Date added"
-                name="dateAdded"
-                value={formData.dateAdded}
-                readOnly={true}
-              />
-            )}
-
-            {mode === "details" && (
-              <Form.Input
-                type="date"
-                label="Last updated"
-                name="lastUpdated"
-                value={formData.lastUpdated}
-                readOnly={true}
-              />
-            )}
-
             <Button primary type="submit" onClick={handleSubmit}>
-              {mode === "create" || mode === "edit" ? "Save" : "Close"}
+              Save
             </Button>
           </div>
         </Form>

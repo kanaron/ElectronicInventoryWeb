@@ -8,21 +8,23 @@ import {
   TableHeader,
   TableRow,
 } from "semantic-ui-react";
+import { useStore } from "../../app/stores/store";
+import { NavLink } from "react-router-dom";
 
 interface Props {
   inventoryItems: InventoryItem[];
-  onEdit: (id: number) => void;
-  onViewDetails: (id: number) => void;
 }
 
-export default function InventoryItemList({
-  inventoryItems,
-  onEdit,
-  onViewDetails,
-}: Props) {
+export default function InventoryItemList({ inventoryItems }: Props) {
+  const { inventoryStore } = useStore();
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const toggleRow = (id: string) => {
     setExpandedRow((prev) => (prev === id ? null : id));
+  };
+
+  const handleEdit = (selectedItem: InventoryItem) => {
+    inventoryStore.selectedItem = selectedItem;
+    inventoryStore.openForm(selectedItem.id);
   };
 
   return (
@@ -56,9 +58,11 @@ export default function InventoryItemList({
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Button
                     primary
-                    onClick={() => onEdit(item.id)}
+                    onClick={() => handleEdit(item)}
                     content="Edit"
                     size="small"
+                    as={NavLink}
+                    to="/addItem"
                   />
                   <Button
                     secondary
