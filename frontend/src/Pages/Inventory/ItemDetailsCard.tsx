@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Card, CheckboxProps, Form, Image } from "semantic-ui-react";
 import { InventoryItem } from "../../models/InventoryItem";
-import axios from "axios";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
 import { useStore } from "../../app/stores/store";
@@ -72,9 +71,7 @@ const ItemDetailsCard: React.FC = () => {
     }
 
     try {
-      const response = await axios.get<InventoryItem>(
-        `https://localhost:7000/api/Inventory/FetchFromTme?symbol=${formData.symbol}`
-      );
+      const response = await agent.InventoryItems.fetchFromTme(formData.symbol);
       if (response.status === 200) {
         setFormData((prev) => ({
           ...prev,

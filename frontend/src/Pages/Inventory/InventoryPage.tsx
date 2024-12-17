@@ -18,21 +18,6 @@ const InventoryPage: React.FC = () => {
   return (
     <Segment clearing>
       <InventoryItemList inventoryItems={inventoryStore.items} />
-
-      {/* <Button
-        content="Add item"
-        primary
-        fluid
-        style={{ marginBottom: "1rem" }}
-        onClick={handleCreate}
-      />
-
-      <ItemDetailsCard
-        itemId={selectedItem?.id ?? undefined}
-        existingItem={selectedItem}
-        mode={mode}
-        onClose={closeDetails}
-      /> */}
     </Segment>
   );
 };
