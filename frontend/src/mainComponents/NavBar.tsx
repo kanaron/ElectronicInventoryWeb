@@ -1,8 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Button, Container, Menu } from "semantic-ui-react";
+import { useStore } from "../app/stores/store";
 
 const NavBar: React.FC = () => {
+  const { inventoryStore } = useStore();
+
+  const handleAddItem = () => {
+    inventoryStore.openForm();
+  };
+
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -14,7 +21,13 @@ const NavBar: React.FC = () => {
           <Button positive content="Inventory" as={NavLink} to="/inventory" />
         </Menu.Item>
         <Menu.Item>
-          <Button positive content="Add item" as={NavLink} to="/addItem" />
+          <Button
+            positive
+            content="Add item"
+            onClick={() => handleAddItem()}
+            as={NavLink}
+            to="/addItem"
+          />
         </Menu.Item>
         <Menu.Menu position="right">
           <Menu.Item>

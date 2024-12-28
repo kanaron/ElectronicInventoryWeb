@@ -5,9 +5,12 @@ import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 
 const ItemDetailsCard: React.FC = () => {
   const { inventoryStore } = useStore();
+  const navigate = useNavigate();
+  const [createNext, setCreateNext] = useState(false);
 
   const [formData, setFormData] = useState<InventoryItem>(
     inventoryStore.selectedItem || {
@@ -53,6 +56,13 @@ const ItemDetailsCard: React.FC = () => {
       ...prev,
       [name as keyof FormData]: checked,
     }));
+  };
+
+  const handleCreateNextChange = (
+    e: React.FormEvent<HTMLInputElement>,
+    data: any
+  ) => {
+    setCreateNext(data.checked);
   };
 
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +113,34 @@ const ItemDetailsCard: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     inventoryStore.addOrUpdateItem(formData);
+    inventoryStore.closeForm();
+
+    if (createNext) {
+      setFormData({
+        id: 0,
+        type: "",
+        symbol: "",
+        category: "",
+        value: "",
+        package: "",
+        quantity: 0,
+        location: "",
+        datasheetLink: "",
+        storeLink: "",
+        photoUrl: "",
+        minStockLevel: 0,
+        description: "",
+        isActive: true,
+        tags: [],
+        dateAdded: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+      });
+    } else {
+      navigate(`/inventory`);
+    }
   };
 
   return (
@@ -228,6 +265,15 @@ const ItemDetailsCard: React.FC = () => {
               checked={formData.isActive}
               onChange={handleCheckboxChange}
             />
+
+            {inventoryStore.editMode === false && (
+              <Form.Checkbox
+                label="Create next"
+                name="createNext"
+                checked={createNext}
+                onChange={handleCreateNextChange}
+              />
+            )}
 
             <Button primary type="submit" onClick={handleSubmit}>
               Save
