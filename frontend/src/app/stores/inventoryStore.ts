@@ -15,20 +15,18 @@ export default class InventoryStore {
 
   loadItems = async () => {
     this.setLoadingInitial(true);
-    this.items.length = 0;
-
     try {
       const loadedItems = await agent.InventoryItems.list();
-      loadedItems.forEach((item) => {
-        item.dateAdded = item.dateAdded.split("T")[0];
-        item.lastUpdated = item.lastUpdated.split("T")[0];
-        this.items.push(item);
+      runInAction(() => {
+        this.items = loadedItems.map((item) => ({
+          ...item,
+          dateAdded: item.dateAdded.split("T")[0],
+          lastUpdated: item.lastUpdated.split("T")[0],
+        }));
         this.setLoadingInitial(false);
       });
-
-      this.loadingInitial = false;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.setLoadingInitial(false);
     }
   };
@@ -66,13 +64,15 @@ export default class InventoryStore {
         ? await agent.InventoryItems.update(item)
         : await agent.InventoryItems.create(item);
       runInAction(() => {
-        if (this.editMode) {
-          this.items.filter((x) => x.id !== item.id);
+        const index = this.items.findIndex((x) => x.id === item.id);
+        if (index >= 0) {
+          this.items[index] = item;
+        } else {
+          this.items.push(item);
         }
-        this.items.push(item);
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       runInAction(() => {
         this.loading = false;
