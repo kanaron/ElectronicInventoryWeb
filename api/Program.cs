@@ -1,4 +1,5 @@
 using API.Interfaces;
+using API.Middleware;
 using API.Service;
 using Application.InventoryItems;
 using Domain.Data;
@@ -102,6 +103,8 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
