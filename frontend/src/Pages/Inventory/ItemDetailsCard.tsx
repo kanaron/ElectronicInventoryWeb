@@ -92,21 +92,6 @@ const ItemDetailsCard: React.FC = () => {
         alert(`Unexpected response: ${response.status}`);
       }
     } catch (error: any) {
-      if (error.response) {
-        if (error.response.status === 404) {
-          alert(
-            "Item not found in TME database. Please check the symbol or fill data manually."
-          );
-        } else {
-          alert(
-            `Error: ${error.response.status} - ${
-              error.response.data.message || "Unknown error"
-            }`
-          );
-        }
-      } else {
-        alert(`Error: ${error.message}`);
-      }
     } finally {
       inventoryStore.setLoading(false);
     }

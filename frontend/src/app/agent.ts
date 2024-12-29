@@ -1,10 +1,45 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { InventoryItem } from "../models/InventoryItem";
 import { User, UserFormValues } from "../models/User";
+import { toast } from "react-toastify";
+import { store } from "./stores/store";
+import { router } from "./router/Routes";
 
 axios.defaults.baseURL = "https://localhost:7000/api";
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
+
+axios.interceptors.response.use(
+  async (response) => {
+    return response;
+  },
+  (error: AxiosError) => {
+    const { data, status } = error.response as AxiosResponse;
+
+    switch (status) {
+      case 400:
+        toast.error(data);
+        break;
+      case 401:
+        toast.error(data);
+        break;
+      case 403:
+        toast.error(data);
+        break;
+      case 404:
+        toast.error(data);
+        break;
+      case 500:
+        store.commonStore.setServerError(data);
+        router.navigate("/server-error");
+        break;
+      default:
+        toast.error(data);
+        break;
+    }
+    return Promise.reject(error);
+  }
+);
 
 const requests = {
   get: <T>(url: string) => axios.get<T>(url).then(responseBody),
