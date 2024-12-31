@@ -1,53 +1,118 @@
-import React, { useState } from "react";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Button, Container, FormField, Grid, Label } from "semantic-ui-react";
+import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-const RegisterForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // Here you can handle API calls for registration
-  };
+export default observer(function RegisterForm() {
+  const { userStore } = useStore();
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button type="submit">Register</button>
-    </form>
-  );
-};
+    <Container style={{ marginTop: "7em" }}>
+      <Grid centered>
+        <Grid.Column width={6}>
+          <Formik
+            initialValues={{
+              email: "",
+              userName: "",
+              password: "",
+              repeatPassword: "",
+              error: null,
+            }}
+            onSubmit={(values, { setErrors }) => {
+              if (values.password !== values.repeatPassword) {
+                setErrors({ error: "Passwords do not match" });
+                return;
+              }
+              userStore
+                .register(values)
+                .catch((error) => setErrors({ error: "Registration failed" }));
+            }}
+          >
+            {({ handleSubmit, isSubmitting, errors }) => (
+              <Form onSubmit={handleSubmit} autoComplete="off">
+                {/* Email Field */}
+                <FormField>
+                  <Field name="email">
+                    {({ field }: any) => (
+                      <input
+                        {...field}
+                        type="email"
+                        placeholder="Enter your email"
+                        style={{ width: "100%", padding: "10px" }}
+                      />
+                    )}
+                  </Field>
+                </FormField>
 
-export default RegisterForm;
+                {/* Username Field */}
+                <FormField style={{ marginTop: "1em" }}>
+                  <Field name="userName">
+                    {({ field }: any) => (
+                      <input
+                        {...field}
+                        placeholder="Enter your login"
+                        style={{ width: "100%", padding: "10px" }}
+                      />
+                    )}
+                  </Field>
+                </FormField>
+
+                {/* Password Field */}
+                <FormField style={{ marginTop: "1em" }}>
+                  <Field name="password">
+                    {({ field }: any) => (
+                      <input
+                        {...field}
+                        type="password"
+                        placeholder="Enter your password"
+                        style={{ width: "100%", padding: "10px" }}
+                      />
+                    )}
+                  </Field>
+                </FormField>
+
+                {/* Repeat Password Field */}
+                <FormField style={{ marginTop: "1em" }}>
+                  <Field name="repeatPassword">
+                    {({ field }: any) => (
+                      <input
+                        {...field}
+                        type="password"
+                        placeholder="Repeat your password"
+                        style={{ width: "100%", padding: "10px" }}
+                      />
+                    )}
+                  </Field>
+                </FormField>
+
+                {/* Error Message */}
+                <ErrorMessage
+                  name="error"
+                  render={() => (
+                    <Label
+                      style={{ marginBottom: "10px", marginTop: "1em" }}
+                      basic
+                      color="red"
+                      content={errors.error}
+                    />
+                  )}
+                />
+
+                {/* Submit Button */}
+                <Button
+                  positive
+                  type="submit"
+                  fluid
+                  loading={isSubmitting}
+                  style={{ marginTop: "1.5em", padding: "12px" }}
+                >
+                  Register
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Grid.Column>
+      </Grid>
+    </Container>
+  );
+});

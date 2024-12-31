@@ -16,11 +16,10 @@ public class InventoryController : BaseApiController
         _tmeApiService = tmeApiService;
     }
 
-    [AllowAnonymous]
     [HttpGet("[action]")]
     public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetInventoryItems(CancellationToken cancellationToken)
     {
-        var userId = "2b293426-e048-46d6-8be3-faa84664a642";// User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -97,7 +96,6 @@ public class InventoryController : BaseApiController
         return Ok();
     }
 
-    [AllowAnonymous]
     [HttpGet("FetchFromTme")]
     public async Task<ActionResult<InventoryItemDto>> FetchFromTme([FromQuery] string symbol)
     {

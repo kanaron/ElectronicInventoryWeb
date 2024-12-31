@@ -47,7 +47,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
             {/* Main Row */}
             <Table.Row>
               <TableCell>
-                <Image src={item.photoUrl} size="small" bordered />
+                <Image src={item.photoUrl} size="tiny" bordered />
               </TableCell>
               <TableCell content={item.quantity} />
               <TableCell content={item.type} />
@@ -58,6 +58,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Button
                     primary
+                    icon="edit"
                     onClick={() => handleEdit(item)}
                     content="Edit"
                     size="small"
@@ -66,6 +67,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
                   />
                   <Button
                     secondary
+                    icon="info"
                     onClick={() => toggleRow(item.id.toString())}
                     content={
                       expandedRow === item.id.toString()

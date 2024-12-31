@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Segment } from "semantic-ui-react";
+import { Container, Segment } from "semantic-ui-react";
 import InventoryItemList from "./InventoryItemList";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import { useStore } from "../../app/stores/store";
@@ -16,9 +16,9 @@ const InventoryPage: React.FC = () => {
     return <LoadingComponent content="Loading data" />;
 
   return (
-    <Segment clearing>
+    <Container fluid style={{ marginTop: "7em", padding: "0 2em" }}>
       <InventoryItemList inventoryItems={inventoryStore.items} />
-    </Segment>
+    </Container>
   );
 };
 

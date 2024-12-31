@@ -1,13 +1,17 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
-import { Button, Container, Menu } from "semantic-ui-react";
+import { Button, Container, Dropdown, Menu } from "semantic-ui-react";
 import { useStore } from "../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-const NavBar: React.FC = () => {
-  const { inventoryStore } = useStore();
+export default observer(function NavBar() {
+  const { inventoryStore, userStore } = useStore();
 
   const handleAddItem = () => {
     inventoryStore.openForm();
+  };
+
+  const handleLogout = () => {
+    userStore.logout();
   };
 
   return (
@@ -30,16 +34,37 @@ const NavBar: React.FC = () => {
           />
         </Menu.Item>
         <Menu.Menu position="right">
-          <Menu.Item>
-            <Button primary content="Login" as={NavLink} to="/login" />
-          </Menu.Item>
-          <Menu.Item>
-            <Button negative content="Register" as={NavLink} to="/register" />
-          </Menu.Item>
+          {userStore.isLoggedIn ? (
+            <>
+              <Menu.Item>
+                <Dropdown pointing="top left" text={userStore.user?.userName}>
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      onClick={handleLogout}
+                      text="Logout"
+                      icon="power"
+                    />
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Menu.Item>
+            </>
+          ) : (
+            <>
+              <Menu.Item>
+                <Button primary content="Login" as={NavLink} to="/login" />
+              </Menu.Item>
+              <Menu.Item>
+                <Button
+                  negative
+                  content="Register"
+                  as={NavLink}
+                  to="/register"
+                />
+              </Menu.Item>
+            </>
+          )}
         </Menu.Menu>
       </Container>
     </Menu>
   );
-};
-
-export default NavBar;
+});
