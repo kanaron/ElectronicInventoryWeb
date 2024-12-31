@@ -4,6 +4,7 @@ using Domain.Dto;
 using Domain.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace API.Controllers;
 
@@ -115,5 +116,39 @@ public class InventoryController : BaseApiController
         var inventoryItemDto = InventoryMappers.FromTmeToInventoryItemDto(productDescription, productParameters);
 
         return Ok(inventoryItemDto);
+    }
+
+    [HttpGet("FetchFromTmeQrCode")]
+    public async Task<ActionResult<InventoryItemDto>> FetchFromTmeQrCode([FromQuery] string qrCode)
+    {
+        if (string.IsNullOrWhiteSpace(qrCode))
+        {
+            return BadRequest("Symbol cannot be empty.");
+        }
+
+        string pattern = @"QTY:(\d+)\s+PN:([^\s]+)(?=\s+PO:)";
+        var match = Regex.Match(qrCode, pattern);
+
+        if (match.Success)
+        {
+            var qty = int.Parse(match.Groups[1].Value);
+            var symbol = match.Groups[2].Value;
+
+            var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(symbol);
+            var productParameters = await _tmeApiService.GetProductWithParametersAsync(symbol);
+
+            if (productDescription == null || productParameters == null)
+            {
+                return NotFound($"No product found with symbol '{symbol}' in TME.");
+            }
+
+            var inventoryItemDto = InventoryMappers.FromTmeToInventoryItemDto(productDescription, productParameters);
+
+            inventoryItemDto.Quantity = qty;
+
+            return Ok(inventoryItemDto);
+        }
+
+        return BadRequest("Invalid QR code");
     }
 }

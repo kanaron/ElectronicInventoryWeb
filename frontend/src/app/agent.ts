@@ -69,6 +69,8 @@ const InventoryItems = {
   delete: (id: string) => axios.delete(`/Inventory/DeleteInventoryItem/${id}`),
   fetchFromTme: (symbol: string) =>
     axios.get<InventoryItem>(`/Inventory/FetchFromTme?symbol=${symbol}`),
+  fetchFromTmeQrCode: (qrCode: string) =>
+    axios.get<InventoryItem>(`/Inventory/FetchFromTmeQrCode?qrCode=${qrCode}`),
 };
 
 const Account = {

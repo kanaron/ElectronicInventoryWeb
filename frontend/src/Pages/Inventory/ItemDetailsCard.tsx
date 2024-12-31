@@ -11,6 +11,7 @@ const ItemDetailsCard: React.FC = () => {
   const { inventoryStore } = useStore();
   const navigate = useNavigate();
   const [createNext, setCreateNext] = useState(false);
+  const [qrCode, setQrCode] = useState<string>("");
 
   const [formData, setFormData] = useState<InventoryItem>(
     inventoryStore.selectedItem || {
@@ -45,6 +46,13 @@ const ItemDetailsCard: React.FC = () => {
           ? parseInt(value, 10)
           : value,
     }));
+  };
+
+  const handleQrChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    data: any
+  ) => {
+    setQrCode(data.value);
   };
 
   const handleCheckboxChange = (
@@ -83,6 +91,30 @@ const ItemDetailsCard: React.FC = () => {
 
     try {
       const response = await agent.InventoryItems.fetchFromTme(formData.symbol);
+      if (response.status === 200) {
+        setFormData((prev) => ({
+          ...prev,
+          ...response.data,
+        }));
+      } else {
+        alert(`Unexpected response: ${response.status}`);
+      }
+    } catch (error: any) {
+    } finally {
+      inventoryStore.setLoading(false);
+    }
+  };
+
+  const handleFetchFromTmeQrCode = async () => {
+    inventoryStore.setLoading(true);
+
+    if (qrCode?.trim() === "") {
+      alert("Please enter a QR Code to fetch data from TME.");
+      return;
+    }
+
+    try {
+      const response = await agent.InventoryItems.fetchFromTmeQrCode(qrCode);
       if (response.status === 200) {
         setFormData((prev) => ({
           ...prev,
@@ -142,6 +174,20 @@ const ItemDetailsCard: React.FC = () => {
         </Card.Header>
         <Form>
           <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Form.Input
+                label="QR Code from TME package: (optional)"
+                name="qrCode"
+                value={qrCode}
+                onChange={handleQrChange}
+              />
+              <Button
+                content="Fetch using QR Code"
+                onClick={handleFetchFromTmeQrCode}
+                style={{ margin: 8 }}
+                disabled={qrCode?.trim() === ""}
+              />
+            </div>
             <div style={{ display: "flex", alignItems: "center" }}>
               <Form.Input
                 label="Symbol"
