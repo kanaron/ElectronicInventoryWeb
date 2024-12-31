@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Button, Card, CheckboxProps, Form, Image } from "semantic-ui-react";
+import {
+  Button,
+  Card,
+  CheckboxProps,
+  Form,
+  Grid,
+  Image,
+} from "semantic-ui-react";
 import { InventoryItem } from "../../models/InventoryItem";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
@@ -163,75 +170,74 @@ const ItemDetailsCard: React.FC = () => {
   return (
     <Card style={{ width: "100%", padding: "8px" }}>
       {inventoryStore.loading && <LoadingComponent content="Fetching data" />}
-      {formData.photoUrl && (
-        <Image src={formData?.photoUrl} size="small" centered />
-      )}
       <Card.Content>
-        <Card.Header>
+        <Card.Header style={{ marginBottom: "16px" }}>
           {inventoryStore.editMode
             ? `Edit item with symbol ${inventoryStore.selectedItem?.symbol}`
             : "Add New Item"}
         </Card.Header>
         <Form>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "8px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Form.Input
                 label="QR Code from TME package: (optional)"
                 name="qrCode"
                 value={qrCode}
                 onChange={handleQrChange}
+                style={{ flex: 1 }}
               />
               <Button
                 content="Fetch using QR Code"
                 onClick={handleFetchFromTmeQrCode}
-                style={{ margin: 8 }}
                 disabled={qrCode?.trim() === ""}
               />
             </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Form.Input
                 label="Symbol"
                 name="symbol"
                 value={formData.symbol}
                 onChange={handleChange}
                 required={true}
+                style={{ flex: 1 }}
               />
               <Button
                 content="Fetch from TME"
                 onClick={handleFetchFromTme}
-                style={{ margin: 8 }}
                 disabled={!formData.symbol.trim()}
+                style={{ alignSelf: "center" }}
               />
             </div>
-
             <Form.Input
               label="Type"
               name="type"
               value={formData.type}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Category"
               name="category"
               value={formData.category}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Value"
               name="value"
               value={formData.value}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Package"
               name="package"
               value={formData.package}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Quantity"
               type="number"
@@ -239,35 +245,30 @@ const ItemDetailsCard: React.FC = () => {
               value={formData.quantity}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Location"
               name="location"
               value={formData.location}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Datasheet link"
               name="datasheetLink"
               value={formData.datasheetLink}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Store link"
               name="storeLink"
               value={formData.storeLink}
               onChange={handleChange}
             />
-
             <Form.Input
-              label="Photo url"
+              label="Photo URL"
               name="photoUrl"
               value={formData.photoUrl}
               onChange={handleChange}
             />
-
             <Form.Input
               label="Min stock level"
               type="number"
@@ -275,29 +276,27 @@ const ItemDetailsCard: React.FC = () => {
               value={formData.minStockLevel}
               onChange={handleChange}
             />
-
             <Form.TextArea
               label="Description"
               name="description"
               value={formData.description}
               onChange={handleChange}
+              style={{ gridColumn: "1 / span 2" }}
             />
-
             <Form.Input
               label="Tags"
               name="tags"
               value={formData.tags}
               onChange={handleTagsChange}
+              style={{ gridColumn: "1 / span 2" }}
             />
-
             <Form.Checkbox
               label="Is active"
               name="isActive"
               checked={formData.isActive}
               onChange={handleCheckboxChange}
             />
-
-            {inventoryStore.editMode === false && (
+            {!inventoryStore.editMode && (
               <Form.Checkbox
                 label="Create next"
                 name="createNext"
@@ -305,11 +304,15 @@ const ItemDetailsCard: React.FC = () => {
                 onChange={handleCreateNextChange}
               />
             )}
-
-            <Button primary type="submit" onClick={handleSubmit}>
-              Save
-            </Button>
           </div>
+          <Button
+            primary
+            type="submit"
+            onClick={handleSubmit}
+            style={{ marginTop: "16px" }}
+          >
+            Save
+          </Button>
         </Form>
       </Card.Content>
     </Card>
