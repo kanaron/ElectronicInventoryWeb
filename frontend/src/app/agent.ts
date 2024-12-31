@@ -62,7 +62,7 @@ const InventoryItems = {
   create: (inventoryItem: InventoryItem) =>
     axios.post(`/Inventory/AddInventoryItem`, inventoryItem),
   update: (inventoryItem: InventoryItem) =>
-    axios.post(
+    axios.put(
       `/Inventory/UpdateInventoryItem/${inventoryItem.id}`,
       inventoryItem
     ),
