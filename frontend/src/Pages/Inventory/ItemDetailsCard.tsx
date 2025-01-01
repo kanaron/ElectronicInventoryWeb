@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  CheckboxProps,
-  Form,
-  Grid,
-  Image,
-} from "semantic-ui-react";
+import { Button, Card, CheckboxProps, Form } from "semantic-ui-react";
 import { InventoryItem } from "../../models/InventoryItem";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import agent from "../../app/agent";
@@ -162,6 +155,7 @@ const ItemDetailsCard: React.FC = () => {
         dateAdded: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
       });
+      setQrCode("");
     } else {
       navigate(`/inventory`);
     }

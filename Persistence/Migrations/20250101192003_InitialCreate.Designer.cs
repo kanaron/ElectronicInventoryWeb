@@ -12,7 +12,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241206145215_InitialCreate")]
+    [Migration("20250101192003_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,13 +25,11 @@ namespace Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.InventoryItem", b =>
+            modelBuilder.Entity("Domain.Data.InventoryItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -100,7 +98,7 @@ namespace Persistence.Migrations
                     b.ToTable("InventoryItems");
                 });
 
-            modelBuilder.Entity("Domain.Subscription", b =>
+            modelBuilder.Entity("Domain.Data.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,7 +132,7 @@ namespace Persistence.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("Domain.User", b =>
+            modelBuilder.Entity("Domain.Data.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -234,13 +232,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "92eff8b6-3605-4b53-a89f-5d0ebad4d7e8",
+                            Id = "c044fb7d-5c58-46d4-b310-74fec8cb60ba",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "049b7ea7-594d-462d-9bcc-b0123bff0308",
+                            Id = "393c7f9b-374f-41cf-a642-b7e59f1ae9d7",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -352,9 +350,9 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.InventoryItem", b =>
+            modelBuilder.Entity("Domain.Data.InventoryItem", b =>
                 {
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.Data.User", "User")
                         .WithMany("InventoryItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -363,11 +361,11 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Subscription", b =>
+            modelBuilder.Entity("Domain.Data.Subscription", b =>
                 {
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.Data.User", "User")
                         .WithOne("Subscription")
-                        .HasForeignKey("Domain.Subscription", "UserId")
+                        .HasForeignKey("Domain.Data.Subscription", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -385,7 +383,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Domain.User", null)
+                    b.HasOne("Domain.Data.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,7 +392,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Domain.User", null)
+                    b.HasOne("Domain.Data.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -409,7 +407,7 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.User", null)
+                    b.HasOne("Domain.Data.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -418,14 +416,14 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Domain.User", null)
+                    b.HasOne("Domain.Data.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.User", b =>
+            modelBuilder.Entity("Domain.Data.User", b =>
                 {
                     b.Navigation("InventoryItems");
 

@@ -164,8 +164,7 @@ namespace Persistence.Migrations
                 name: "InventoryItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -223,8 +222,8 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "049b7ea7-594d-462d-9bcc-b0123bff0308", null, "User", "USER" },
-                    { "92eff8b6-3605-4b53-a89f-5d0ebad4d7e8", null, "Admin", "ADMIN" }
+                    { "393c7f9b-374f-41cf-a642-b7e59f1ae9d7", null, "User", "USER" },
+                    { "c044fb7d-5c58-46d4-b310-74fec8cb60ba", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

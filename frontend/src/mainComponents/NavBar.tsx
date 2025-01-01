@@ -22,11 +22,18 @@ export default observer(function NavBar() {
           Electronics Inventory
         </Menu.Item>
         <Menu.Item>
-          <Button positive content="Inventory" as={NavLink} to="/inventory" />
+          <Button
+            positive
+            icon="database"
+            content="Inventory"
+            as={NavLink}
+            to="/inventory"
+          />
         </Menu.Item>
         <Menu.Item>
           <Button
             positive
+            icon="plus"
             content="Add item"
             onClick={() => handleAddItem()}
             as={NavLink}

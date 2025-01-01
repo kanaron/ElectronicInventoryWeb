@@ -91,6 +91,8 @@ public class AccountController : ControllerBase
     {
         var user = await userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
+        if (user == null) return NotFound();
+
         return Ok(new NewUser
         {
             UserName = user.UserName,
