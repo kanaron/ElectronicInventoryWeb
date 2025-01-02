@@ -72,16 +72,36 @@ public class InventoryController : BaseApiController
 
         item.UserId = userId;
 
+        var existingItem = await Mediator.Send(new ItemDuplicateFind.Query
+        {
+            UserId = userId,
+            Type = item.Type,
+            Symbol = item.Symbol,
+            Value = item.Value,
+            Package = item.Package
+        }, cancellationToken);
+
+        if (existingItem != null)
+        {
+            var existingItemDto = existingItem.ToUpdateInventoryItemDto();
+            existingItemDto.Quantity += item.Quantity;
+            existingItemDto.IsActive = true;
+            await Mediator.Send(new EditInventoryItem.Command { ItemDto = existingItemDto, ItemId = existingItemDto.Id }, cancellationToken);
+
+            return Ok(existingItemDto);
+        }
+
+
         await Mediator.Send(new AddInventoryItem.Command { Item = item }, cancellationToken);
 
         var savedItem = item.ToInventoryItemDto();
 
-        return Ok(CreatedAtAction(nameof(AddInventoryItem), new { id = savedItem.Id }, savedItem));
+        return Created();
     }
 
     [HttpPut]
     [Route("[action]/{id}")]
-    public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] int id, [FromBody] UpdateInventoryItemDto inventoryItemDto, CancellationToken cancellationToken)
+    public async Task<ActionResult<InventoryItemDto>> UpdateInventoryItem([FromRoute] Guid id, [FromBody] UpdateInventoryItemDto inventoryItemDto, CancellationToken cancellationToken)
     {
         await Mediator.Send(new EditInventoryItem.Command { ItemDto = inventoryItemDto, ItemId = id }, cancellationToken);
 

@@ -1,7 +1,5 @@
 ﻿using Domain.Data;
-using Domain.Mappers;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.InventoryItems;

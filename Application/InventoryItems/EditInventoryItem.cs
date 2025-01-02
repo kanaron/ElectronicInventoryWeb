@@ -9,7 +9,7 @@ public class EditInventoryItem
     public class Command : IRequest
     {
         public UpdateInventoryItemDto ItemDto { get; set; }
-        public int ItemId { get; set; }
+        public Guid ItemId { get; set; }
     }
 
     public class Handler : IRequestHandler<Command>

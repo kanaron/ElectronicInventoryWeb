@@ -54,13 +54,36 @@ public static class InventoryMappers
         };
     }
 
+    public static UpdateInventoryItemDto ToUpdateInventoryItemDto(this InventoryItem item)
+    {
+        return new UpdateInventoryItemDto
+        {
+            Id = item.Id,
+            Type = item.Type,
+            Symbol = item.Symbol,
+            Category = item.Category,
+            Value = item.Value,
+            Package = item.Package,
+            Quantity = item.Quantity,
+            Location = item.Location,
+            DatasheetLink = item.DatasheetLink,
+            StoreLink = item.StoreLink,
+            PhotoUrl = item.PhotoUrl,
+            MinStockLevel = item.MinStockLevel,
+            Description = item.Description,
+            IsActive = item.IsActive,
+            Tags = item.Tags,
+            LastUpdated = DateTime.Now
+        };
+    }
+
     public static InventoryItemDto FromTmeToInventoryItemDto(ProductWithDescription descriptionItem, ProductWithParameters parametersItem)
     {
         return new InventoryItemDto
         {
             Type = descriptionItem.Category ?? string.Empty,
             Symbol = descriptionItem.Symbol!,
-            Category = descriptionItem.Category ?? string.Empty,
+            Category = ExtractCategory(descriptionItem.Category),
             Value = GetValueFromParameters(parametersItem),
             Package = GetPackageFromParameters(parametersItem),
             Quantity = 0,
@@ -110,4 +133,32 @@ public static class InventoryMappers
 
         return "N/A";
     }
+
+    private static string ExtractCategory(string? fullCategory)
+    {
+        if (string.IsNullOrEmpty(fullCategory))
+            return "Unknown";
+
+        var categoryWords = fullCategory.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var word in categoryWords)
+        {
+            if (CategoryMappings.TryGetValue(word, out var simplifiedCategory))
+            {
+                return simplifiedCategory;
+            }
+        }
+
+        return "Other";
+    }
+
+    private static readonly Dictionary<string, string> CategoryMappings = new()
+{
+    { "capacitor", "capacitor" },
+    { "resistor", "resistor" },
+    { "inductor", "inductor" },
+    { "N channel transistor", "N transistor" },
+    { "transistor", "transistor" },
+    { "STM32", "STM32" }
+};
 }
