@@ -6,6 +6,7 @@ import agent from "../../app/agent";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
+import { runInAction } from "mobx";
 
 const ItemDetailsCard: React.FC = () => {
   const { inventoryStore } = useStore();
@@ -157,7 +158,10 @@ const ItemDetailsCard: React.FC = () => {
       });
       setQrCode("");
     } else {
-      navigate(`/inventory`);
+      inventoryStore.loadItems();
+      runInAction(() => {
+        navigate(`/inventory`);
+      });
     }
   };
 

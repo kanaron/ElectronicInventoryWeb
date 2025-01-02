@@ -15,6 +15,7 @@ export default class InventoryStore {
 
   loadItems = async () => {
     this.setLoadingInitial(true);
+    this.items = [];
     try {
       const loadedItems = await agent.InventoryItems.list();
       runInAction(() => {
@@ -63,14 +64,6 @@ export default class InventoryStore {
       this.editMode
         ? await agent.InventoryItems.update(item)
         : await agent.InventoryItems.create(item);
-      runInAction(() => {
-        const index = this.items.findIndex((x) => x.id === item.id);
-        if (index >= 0) {
-          this.items[index] = item;
-        } else {
-          this.items.push(item);
-        }
-      });
     } catch (error) {
       console.error(error);
     } finally {

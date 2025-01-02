@@ -154,11 +154,10 @@ public static class InventoryMappers
 
     private static readonly Dictionary<string, string> CategoryMappings = new()
 {
-    { "capacitor", "capacitor" },
-    { "resistor", "resistor" },
-    { "inductor", "inductor" },
-    { "N channel transistor", "N transistor" },
-    { "transistor", "transistor" },
+    { "capacitors", "Capacitor" },
+    { "resistors", "Resistor" },
+    { "inductors", "Inductor" },
+    { "transistors", "Transistor" },
     { "STM32", "STM32" }
 };
 }
