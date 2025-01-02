@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { InventoryItem } from "../../models/InventoryItem";
 import {
   Button,
+  Checkbox,
   Dropdown,
   Image,
   Input,
@@ -22,6 +23,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const [showInactive, setShowInactive] = useState(false);
 
   const toggleRow = (id: string) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -40,6 +42,10 @@ export default function InventoryItemList({ inventoryItems }: Props) {
     setFilterCategory(data.value);
   };
 
+  const handleShowInactive = () => {
+    setShowInactive((prev) => !prev);
+  };
+
   const filteredItems = inventoryItems.filter((item) => {
     const matchesSearch =
       searchTerm === "" ||
@@ -53,7 +59,9 @@ export default function InventoryItemList({ inventoryItems }: Props) {
     const matchesCategory =
       filterCategory === "" || item.category === filterCategory;
 
-    return matchesSearch && matchesCategory;
+    const matchesActiveStatus = showInactive || item.isActive;
+
+    return matchesSearch && matchesCategory && matchesActiveStatus;
   });
 
   const categoryOptions = Array.from(
@@ -66,7 +74,6 @@ export default function InventoryItemList({ inventoryItems }: Props) {
 
   return (
     <div>
-      {/* Search and Filter Controls */}
       <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
         <Input
           icon="search"
@@ -81,6 +88,16 @@ export default function InventoryItemList({ inventoryItems }: Props) {
           options={categoryOptions}
           onChange={handleFilterCategory}
         />
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Checkbox
+            toggle
+            checked={showInactive}
+            onChange={handleShowInactive}
+          />
+          <label style={{ fontSize: "14px", color: "#f9f9f9" }}>
+            Show Inactive
+          </label>
+        </div>
       </div>
 
       <Table celled>
