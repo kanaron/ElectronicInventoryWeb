@@ -141,6 +141,15 @@ public static class InventoryMappers
 
         var categoryWords = fullCategory.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
+        if (capacitorUnpolarizedKeywords.Any(x => categoryWords.Contains(x)))
+        {
+            return "Unpolarized capacitor";
+        }
+        else if (capacitorPolarizedKeywords.Any(x => categoryWords.Contains(x)))
+        {
+            return "Polarized capacitor";
+        }
+
         foreach (var word in categoryWords)
         {
             if (CategoryMappings.TryGetValue(word, out var simplifiedCategory))
@@ -160,4 +169,7 @@ public static class InventoryMappers
     { "transistors", "Transistor" },
     { "STM32", "STM32" }
 };
+
+    private static readonly string[] capacitorUnpolarizedKeywords = new[] { "MLCC", "film", "ceramic" };
+    private static readonly string[] capacitorPolarizedKeywords = new[] { "electrolytic", "tantalum", "polymer", "hybrid" };
 }

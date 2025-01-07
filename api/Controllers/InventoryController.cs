@@ -86,6 +86,10 @@ public class InventoryController : BaseApiController
             var existingItemDto = existingItem.ToUpdateInventoryItemDto();
             existingItemDto.Quantity += item.Quantity;
             existingItemDto.IsActive = true;
+            if (existingItemDto.Location != item.Location)
+            {
+                existingItemDto.Location = $"{existingItemDto.Location} | {item.Location}";
+            }
             await Mediator.Send(new EditInventoryItem.Command { ItemDto = existingItemDto, ItemId = existingItemDto.Id }, cancellationToken);
 
             return Ok(existingItemDto);
