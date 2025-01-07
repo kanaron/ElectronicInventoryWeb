@@ -16,7 +16,7 @@ const ItemDetailsCard: React.FC = () => {
 
   const [formData, setFormData] = useState<InventoryItem>(
     inventoryStore.selectedItem || {
-      id: 0,
+      id: "",
       type: "",
       symbol: "",
       category: "",
@@ -138,7 +138,7 @@ const ItemDetailsCard: React.FC = () => {
 
     if (createNext) {
       setFormData({
-        id: 0,
+        id: "",
         type: "",
         symbol: "",
         category: "",

@@ -34,6 +34,10 @@ export default function InventoryItemList({ inventoryItems }: Props) {
     inventoryStore.openForm(selectedItem.id);
   };
 
+  const handleDelete = (selectedItem: InventoryItem) => {
+    inventoryStore.removeItem(selectedItem);
+  };
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value.toLowerCase());
   };
@@ -148,6 +152,12 @@ export default function InventoryItemList({ inventoryItems }: Props) {
                           ? "Hide Details"
                           : "Details"
                       }
+                      size="small"
+                    />
+                    <Button
+                      icon="remove"
+                      onClick={() => handleDelete(item)}
+                      content="Remove"
                       size="small"
                     />
                   </div>

@@ -114,7 +114,7 @@ public class InventoryController : BaseApiController
 
     [HttpDelete]
     [Route("[action]/{id}")]
-    public async Task<ActionResult> DeleteInventoryItem([FromRoute] int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteInventoryItem([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         await Mediator.Send(new DeleteInventoryItem.Command { ItemId = id }, cancellationToken);
 

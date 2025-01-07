@@ -8,7 +8,7 @@ public class DeleteInventoryItem
 {
     public class Command : IRequest
     {
-        public int ItemId { get; set; }
+        public Guid ItemId { get; set; }
     }
 
     public class Handler : IRequestHandler<Command>

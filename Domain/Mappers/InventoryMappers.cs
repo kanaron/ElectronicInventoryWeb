@@ -170,6 +170,6 @@ public static class InventoryMappers
     { "STM32", "STM32" }
 };
 
-    private static readonly string[] capacitorUnpolarizedKeywords = new[] { "MLCC", "film", "ceramic" };
+    private static readonly string[] capacitorUnpolarizedKeywords = new[] { "mlcc", "film", "ceramic" };
     private static readonly string[] capacitorPolarizedKeywords = new[] { "electrolytic", "tantalum", "polymer", "hybrid" };
 }

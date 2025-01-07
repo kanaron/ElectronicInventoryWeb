@@ -40,7 +40,7 @@ export default class InventoryStore {
     this.loading = state;
   };
 
-  selectItem = (id: number) => {
+  selectItem = (id: string) => {
     this.selectedItem = this.items.find((x) => x.id === id);
   };
 
@@ -48,7 +48,7 @@ export default class InventoryStore {
     this.selectedItem = undefined;
   };
 
-  openForm = (id?: number) => {
+  openForm = (id?: string) => {
     id ? this.selectItem(id) : this.cancelSelectedItem();
     id ? (this.editMode = true) : (this.editMode = false);
   };
@@ -64,6 +64,20 @@ export default class InventoryStore {
       this.editMode
         ? await agent.InventoryItems.update(item)
         : await agent.InventoryItems.create(item);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  removeItem = async (item: InventoryItem) => {
+    this.loading = true;
+    try {
+      await agent.InventoryItems.delete(item.id);
+      this.loadItems();
     } catch (error) {
       console.error(error);
     } finally {
