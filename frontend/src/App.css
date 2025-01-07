@@ -8,7 +8,7 @@
 }
 
 .ui.inverted.top.fixed.menu {
-  background-image: linear-gradient(135deg, rgb(24,42,115) 0%, rgb(33,138,174) 69%, rgb(0,255,255) 89%) !important;
+  background-image: linear-gradient(135deg, rgb(24,42,115) 0%, rgb(16, 86, 109) 69%) !important;
 }
 
 #root {
@@ -54,4 +54,13 @@
 .ui.table {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
+}
+
+.custom-modal .ui.modal {
+  background-color: #1e1e1e; 
+  color: white; 
+}
+
+.custom-modal .ui.button {
+  color: white !important;
 }

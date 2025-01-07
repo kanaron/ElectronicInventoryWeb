@@ -4,8 +4,11 @@ import {
   Button,
   Checkbox,
   Dropdown,
+  Header,
   Image,
   Input,
+  Modal,
+  ModalContent,
   Table,
   TableCell,
   TableHeader,
@@ -24,6 +27,8 @@ export default function InventoryItemList({ inventoryItems }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [showInactive, setShowInactive] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
   const toggleRow = (id: string) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -34,12 +39,34 @@ export default function InventoryItemList({ inventoryItems }: Props) {
     inventoryStore.openForm(selectedItem.id);
   };
 
-  const handleDelete = (selectedItem: InventoryItem) => {
-    inventoryStore.removeItem(selectedItem);
+  const handleDelete = () => {
+    if (selectedItem) {
+      inventoryStore.removeItem(selectedItem);
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleSetInactive = () => {
+    if (selectedItem) {
+      selectedItem.isActive = false;
+      inventoryStore.editMode = true;
+      inventoryStore.addOrUpdateItem(selectedItem);
+      setIsModalOpen(false);
+    }
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  const openModal = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setIsModalOpen(false);
   };
 
   const handleFilterCategory = (event: any, data: any) => {
@@ -155,8 +182,9 @@ export default function InventoryItemList({ inventoryItems }: Props) {
                       size="small"
                     />
                     <Button
-                      icon="remove"
-                      onClick={() => handleDelete(item)}
+                      icon="trash alternate"
+                      color="red"
+                      onClick={() => openModal(item)}
                       content="Remove"
                       size="small"
                     />
@@ -210,6 +238,24 @@ export default function InventoryItemList({ inventoryItems }: Props) {
           ))}
         </Table.Body>
       </Table>
+
+      <Modal open={isModalOpen} onClose={closeModal} size="tiny">
+        <Header>Confirm Action</Header>
+        <ModalContent>
+          <p style={{ color: "#333" }}>
+            Do you want to permanently delete this item or set it as inactive?
+          </p>
+        </ModalContent>
+        <Modal.Actions>
+          <Button color="red" onClick={handleDelete}>
+            Remove
+          </Button>
+          <Button color="yellow" onClick={handleSetInactive}>
+            Set as Inactive
+          </Button>
+          <Button onClick={closeModal}>Cancel</Button>
+        </Modal.Actions>
+      </Modal>
     </div>
   );
 }
