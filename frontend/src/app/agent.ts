@@ -4,6 +4,7 @@ import { User, UserFormValues } from "../models/User";
 import { toast } from "react-toastify";
 import { store } from "./stores/store";
 import { router } from "./router/Routes";
+import { ServerError } from "../models/serverError";
 
 axios.defaults.baseURL = "https://localhost:7000/api";
 
@@ -20,27 +21,35 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const { data, status } = error.response as AxiosResponse;
+    const { data, status } = error.response || {};
 
     switch (status) {
       case 400:
-        toast.error(data);
+        if (Array.isArray(data)) {
+          return Promise.reject(data);
+        } else if (typeof data === "string") {
+          toast.error(data || "Bad Request");
+          return Promise.reject([data]);
+        }
         break;
       case 401:
-        toast.error(data);
+        toast.error(typeof data === "string" ? data : "Unauthorized");
         break;
       case 403:
-        toast.error(data);
+        toast.error(typeof data === "string" ? data : "Forbidden");
         break;
       case 404:
-        toast.error(data);
+        toast.error(typeof data === "string" ? data : "Not Found");
         break;
       case 500:
-        store.commonStore.setServerError(data);
+        const serverError = data as ServerError;
+        store.commonStore.setServerError(
+          serverError || "An unexpected server error occurred"
+        );
         router.navigate("/server-error");
         break;
       default:
-        toast.error(data);
+        toast.error("An unexpected error occurred");
         break;
     }
     return Promise.reject(error);

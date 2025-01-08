@@ -16,19 +16,23 @@ export default observer(function RegisterForm() {
               userName: "",
               password: "",
               repeatPassword: "",
-              error: null,
+              error: [],
             }}
             onSubmit={(values, { setErrors }) => {
               if (values.password !== values.repeatPassword) {
-                setErrors({ error: "Passwords do not match" });
+                setErrors({ error: ["Passwords do not match"] });
                 return;
               }
-              userStore
-                .register(values)
-                .catch((error) => setErrors({ error: "Registration failed" }));
+              userStore.register(values).catch((error) => {
+                if (Array.isArray(error)) {
+                  setErrors({ error: error.map((err) => err.description) });
+                } else {
+                  setErrors({ error: ["An unexpected error occurred"] });
+                }
+              });
             }}
           >
-            {({ handleSubmit, isSubmitting, errors }) => (
+            {({ handleSubmit, errors }) => (
               <Form onSubmit={handleSubmit} autoComplete="off">
                 {/* Email Field */}
                 <FormField>
@@ -88,14 +92,21 @@ export default observer(function RegisterForm() {
                 {/* Error Message */}
                 <ErrorMessage
                   name="error"
-                  render={() => (
-                    <Label
-                      style={{ marginBottom: "10px", marginTop: "1em" }}
-                      basic
-                      color="red"
-                      content={errors.error}
-                    />
-                  )}
+                  render={() =>
+                    Array.isArray(errors.error) && (
+                      <div style={{ marginTop: "1em" }}>
+                        {errors.error.map((err, idx) => (
+                          <Label
+                            key={idx}
+                            style={{ marginBottom: "5px" }}
+                            basic
+                            color="red"
+                            content={err}
+                          />
+                        ))}
+                      </div>
+                    )
+                  }
                 />
 
                 {/* Submit Button */}
@@ -103,7 +114,6 @@ export default observer(function RegisterForm() {
                   positive
                   type="submit"
                   fluid
-                  loading={isSubmitting}
                   style={{ marginTop: "1.5em", padding: "12px" }}
                 >
                   Register

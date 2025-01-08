@@ -20,7 +20,7 @@ export default observer(function LoginForm() {
                 );
             }}
           >
-            {({ handleSubmit, isSubmitting, errors }) => (
+            {({ handleSubmit, errors }) => (
               <Form onSubmit={handleSubmit} autoComplete="off">
                 <FormField>
                   <Field name="userName">
@@ -63,7 +63,6 @@ export default observer(function LoginForm() {
                   positive
                   type="submit"
                   fluid
-                  loading={isSubmitting}
                   style={{ marginTop: "1.5em", padding: "12px" }}
                 >
                   Login
