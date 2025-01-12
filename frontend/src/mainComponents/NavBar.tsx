@@ -40,36 +40,19 @@ export default observer(function NavBar() {
             to="/addItem"
           />
         </Menu.Item>
+
         <Menu.Menu position="right">
-          {userStore.isLoggedIn ? (
-            <>
-              <Menu.Item>
-                <Dropdown pointing="top left" text={userStore.user?.userName}>
-                  <Dropdown.Menu>
-                    <Dropdown.Item
-                      onClick={handleLogout}
-                      text="Logout"
-                      icon="power"
-                    />
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Menu.Item>
-            </>
-          ) : (
-            <>
-              <Menu.Item>
-                <Button primary content="Login" as={NavLink} to="/login" />
-              </Menu.Item>
-              <Menu.Item>
-                <Button
-                  negative
-                  content="Register"
-                  as={NavLink}
-                  to="/register"
+          <Menu.Item>
+            <Dropdown pointing="top left" text={userStore.user?.userName}>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={handleLogout}
+                  text="Logout"
+                  icon="power"
                 />
-              </Menu.Item>
-            </>
-          )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </Menu.Item>
         </Menu.Menu>
       </Container>
     </Menu>

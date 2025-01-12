@@ -1,10 +1,10 @@
- body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  height: 100%;
+body {
+  font-family: Arial, sans-serif !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
   background: linear-gradient(to bottom, #2c2f33, #23272a) !important;
-  color: #fff;
+  color: #fff !important;
 }
 
 .ui.inverted.top.fixed.menu {
@@ -12,55 +12,94 @@
 }
 
 #root {
-  height: 100%;
+  height: 100% !important;
 }
 
 .page-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%; 
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
 }
 
 .app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
 }
 
 .content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  background-color: #3a3a3a;
-  border-radius: 8px;
-  margin: 10px;
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  background-color: #3a3a3a !important;
+  border-radius: 8px !important;
+  margin: 10px !important;
 }
 
 .ui.table tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #f9f9f9 !important;
 }
 
 .ui.table tr:hover {
-  background-color: #e8f0fe;
-  cursor: pointer;
+  background-color: #e8f0fe !important;
+  cursor: pointer !important;
 }
 
 .ui.table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .ui.table {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 8px !important;
 }
 
 .custom-modal .ui.modal {
-  background-color: #1e1e1e; 
-  color: white; 
+  background-color: #1e1e1e !important;
+  color: white !important;
 }
 
 .custom-modal .ui.button {
   color: white !important;
+}
+
+.home-segment {
+  padding: 60px 0 !important;
+  background: linear-gradient(135deg, rgb(24, 42, 115) 0%, rgb(16, 86, 109) 100%) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5) !important;
+  color: white !important;
+  max-width: 600px !important;
+  width: 100% !important;
+  margin: auto !important; /* Centers the segment itself */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.home-header {
+  font-size: 3rem !important;
+  font-weight: bold !important;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7) !important;
+  margin-bottom: 40px !important;
+}
+
+.button-segment {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  align-items: center !important; /* Ensures buttons are centered */
+}
+
+.home-button {
+  width: 220px !important;
+  padding: 12px 0 !important;
+  border-radius: 50px !important;
+  font-size: 1.2rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.home-button:hover {
+  transform: scale(1.07) !important;
+  box-shadow: 0 5px 10px rgba(255, 255, 255, 0.3) !important;
 }

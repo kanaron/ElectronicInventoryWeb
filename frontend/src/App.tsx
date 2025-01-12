@@ -25,7 +25,7 @@ function App() {
   return (
     <>
       <ToastContainer position="bottom-right" theme="colored" hideProgressBar />
-      <NavBar />
+      {userStore.isLoggedIn && <NavBar />}
       <Container style={{ marginTop: "7em" }} fluid>
         <Outlet />
       </Container>

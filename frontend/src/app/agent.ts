@@ -23,35 +23,36 @@ axios.interceptors.response.use(
   (error: AxiosError) => {
     const { data, status } = error.response || {};
 
-    switch (status) {
-      case 400:
-        if (Array.isArray(data)) {
-          return Promise.reject(data);
-        } else if (typeof data === "string") {
-          toast.error(data || "Bad Request");
-          return Promise.reject([data]);
-        }
-        break;
-      case 401:
-        toast.error(typeof data === "string" ? data : "Unauthorized");
-        break;
-      case 403:
-        toast.error(typeof data === "string" ? data : "Forbidden");
-        break;
-      case 404:
-        toast.error(typeof data === "string" ? data : "Not Found");
-        break;
-      case 500:
-        const serverError = data as ServerError;
-        store.commonStore.setServerError(
-          serverError || "An unexpected server error occurred"
-        );
-        router.navigate("/server-error");
-        break;
-      default:
-        toast.error("An unexpected error occurred");
-        break;
-    }
+    if (store.userStore.isLoggedIn)
+      switch (status) {
+        case 400:
+          if (Array.isArray(data)) {
+            return Promise.reject(data);
+          } else if (typeof data === "string") {
+            toast.error(data || "Bad Request");
+            return Promise.reject([data]);
+          }
+          break;
+        case 401:
+          toast.error(typeof data === "string" ? data : "Unauthorized");
+          break;
+        case 403:
+          toast.error(typeof data === "string" ? data : "Forbidden");
+          break;
+        case 404:
+          toast.error(typeof data === "string" ? data : "Not Found");
+          break;
+        case 500:
+          const serverError = data as ServerError;
+          store.commonStore.setServerError(
+            serverError || "An unexpected server error occurred"
+          );
+          router.navigate("/server-error");
+          break;
+        default:
+          toast.error("An unexpected error occurred");
+          break;
+      }
     return Promise.reject(error);
   }
 );
