@@ -1,7 +1,9 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Button, Container, FormField, Grid, Label } from "semantic-ui-react";
+import { Button, Container, Grid } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
+import "./RegisterForm.css";
 
 export default observer(function RegisterForm() {
   const { userStore } = useStore();
@@ -10,117 +12,110 @@ export default observer(function RegisterForm() {
     <Container style={{ marginTop: "7em" }}>
       <Grid centered>
         <Grid.Column width={6}>
-          <Formik
-            initialValues={{
-              email: "",
-              userName: "",
-              password: "",
-              repeatPassword: "",
-              error: [],
-            }}
-            onSubmit={(values, { setErrors }) => {
-              if (values.password !== values.repeatPassword) {
-                setErrors({ error: ["Passwords do not match"] });
-                return;
-              }
-              userStore.register(values).catch((error) => {
-                if (Array.isArray(error)) {
-                  setErrors({ error: error.map((err) => err.description) });
-                } else {
-                  setErrors({ error: ["An unexpected error occurred"] });
+          <div className="register-segment">
+            <h2 className="register-heared">Create an Account</h2>
+            <Formik
+              initialValues={{
+                email: "",
+                userName: "",
+                password: "",
+                repeatPassword: "",
+                error: [],
+              }}
+              onSubmit={(values, { setErrors }) => {
+                if (values.password !== values.repeatPassword) {
+                  setErrors({ error: ["Passwords do not match"] });
+                  return;
                 }
-              });
-            }}
-          >
-            {({ handleSubmit, errors }) => (
-              <Form onSubmit={handleSubmit} autoComplete="off">
-                {/* Email Field */}
-                <FormField>
+                userStore.register(values).catch((error) => {
+                  if (Array.isArray(error)) {
+                    setErrors({ error: error.map((err) => err.description) });
+                  } else {
+                    setErrors({ error: ["An unexpected error occurred"] });
+                  }
+                });
+              }}
+            >
+              {({ handleSubmit, errors }) => (
+                <Form onSubmit={handleSubmit} autoComplete="off">
                   <Field name="email">
                     {({ field }: any) => (
                       <input
                         {...field}
                         type="email"
-                        placeholder="Enter your email"
-                        style={{ width: "100%", padding: "10px" }}
+                        placeholder="Email"
+                        className="register-input"
                       />
                     )}
                   </Field>
-                </FormField>
-
-                {/* Username Field */}
-                <FormField style={{ marginTop: "1em" }}>
                   <Field name="userName">
                     {({ field }: any) => (
                       <input
                         {...field}
-                        placeholder="Enter your login"
-                        style={{ width: "100%", padding: "10px" }}
+                        placeholder="Username"
+                        className="register-input"
                       />
                     )}
                   </Field>
-                </FormField>
-
-                {/* Password Field */}
-                <FormField style={{ marginTop: "1em" }}>
                   <Field name="password">
                     {({ field }: any) => (
                       <input
                         {...field}
                         type="password"
-                        placeholder="Enter your password"
-                        style={{ width: "100%", padding: "10px" }}
+                        placeholder="Password"
+                        className="register-input"
                       />
                     )}
                   </Field>
-                </FormField>
-
-                {/* Repeat Password Field */}
-                <FormField style={{ marginTop: "1em" }}>
                   <Field name="repeatPassword">
                     {({ field }: any) => (
                       <input
                         {...field}
                         type="password"
-                        placeholder="Repeat your password"
-                        style={{ width: "100%", padding: "10px" }}
+                        placeholder="Repeat Password"
+                        className="register-input"
                       />
                     )}
                   </Field>
-                </FormField>
 
-                {/* Error Message */}
-                <ErrorMessage
-                  name="error"
-                  render={() =>
-                    Array.isArray(errors.error) && (
-                      <div style={{ marginTop: "1em" }}>
-                        {errors.error.map((err, idx) => (
-                          <Label
-                            key={idx}
-                            style={{ marginBottom: "5px" }}
-                            basic
-                            color="red"
-                            content={err}
-                          />
-                        ))}
-                      </div>
-                    )
-                  }
-                />
+                  <ErrorMessage
+                    name="error"
+                    render={() =>
+                      Array.isArray(errors.error) && (
+                        <div className="register-error-messages">
+                          {errors.error.map((err, idx) => (
+                            <div key={idx} className="error-message">
+                              {err}
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    }
+                  />
 
-                {/* Submit Button */}
-                <Button
-                  positive
-                  type="submit"
-                  fluid
-                  style={{ marginTop: "1.5em", padding: "12px" }}
-                >
-                  Register
-                </Button>
-              </Form>
-            )}
-          </Formik>
+                  <div className="register-buttons">
+                    <Button posistive type="submit" className="register-button">
+                      Register
+                    </Button>
+
+                    <Button
+                      type="button"
+                      className="cancel-button"
+                      as={Link}
+                      to="/"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+
+                  <div className="login-link">
+                    Already have an account?{" "}
+                    <Link to="/login">Log in here</Link>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
         </Grid.Column>
       </Grid>
     </Container>

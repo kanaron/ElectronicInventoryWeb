@@ -1,0 +1,61 @@
+.login-segment {
+    padding: 40px;
+    background: linear-gradient(135deg, rgb(24, 42, 115) 0%, rgb(16, 86, 109) 100%);
+    border-radius: 16px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+    color: white;
+    max-width: 600px;
+    width: 100%;
+    margin: 80px auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-header {
+    margin-bottom: 1em;
+    font-size: 1.5em;
+  }
+  
+  .login-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 1em;
+  }
+  
+  .login-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+  }
+  
+  .login-button, .cancel-button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .login-button {
+    background-color: #21ba45;
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #db2828;
+    color: white;
+  }
+  
+  .register-link {
+    margin-top: 1.5em;
+  }
+  
+  .register-link a {
+    color: #ffffff;
+    text-decoration: underline;
+  }
