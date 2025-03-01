@@ -98,8 +98,6 @@ public class InventoryController : BaseApiController
 
         await Mediator.Send(new AddInventoryItem.Command { Item = item }, cancellationToken);
 
-        var savedItem = item.ToInventoryItemDto();
-
         return Created();
     }
 

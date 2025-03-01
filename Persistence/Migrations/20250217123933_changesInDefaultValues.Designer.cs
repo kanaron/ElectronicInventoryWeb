@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250217123933_changesInDefaultValues")]
+    partial class changesInDefaultValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,13 +56,6 @@ namespace Persistence.Migrations
 
                     b.Property<string>("References")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StandardUnit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("StandardValue")
-                        .HasColumnType("float");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -114,13 +110,6 @@ namespace Persistence.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<string>("StandardUnit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("StandardValue")
-                        .HasColumnType("float");
 
                     b.Property<string>("StoreLink")
                         .IsRequired()
@@ -317,13 +306,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "073569f4-3b7e-4bae-8b46-43d3fe7a84e5",
+                            Id = "f63f025a-51e0-47f5-b7b1-e57830d995b2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "5ac3ee02-a7ef-4bcc-afc0-3e942d6b88cd",
+                            Id = "dbb2053b-7095-45b6-9897-ac5d2e38076e",
                             Name = "User",
                             NormalizedName = "USER"
                         });

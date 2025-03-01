@@ -10,6 +10,10 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<InventoryItem> InventoryItems { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
 
+    public DbSet<BomItem> BomItems { get; set; }
+
+    public DbSet<Project> Projects { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
 
@@ -39,6 +43,17 @@ public class AppDbContext : IdentityDbContext<User>
             .HasMany(u => u.InventoryItems)
             .WithOne(i => i.User)
             .HasForeignKey(i => i.UserId);
+
+        builder.Entity<User>()
+            .HasMany(u => u.Projects)
+            .WithOne(i => i.User)
+            .HasForeignKey(i => i.UserId);
+
+        builder.Entity<Project>()
+            .HasMany(p => p.BomItems)
+            .WithOne(i => i.Project)
+            .HasForeignKey(i => i.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<User>()
             .HasOne(u => u.Subscription)

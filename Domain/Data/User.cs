@@ -10,4 +10,5 @@ public class User : IdentityUser
     public Subscription Subscription { get; set; }
 
     public ICollection<InventoryItem> InventoryItems { get; set; }
+    public ICollection<Project> Projects { get; set; }
 }
