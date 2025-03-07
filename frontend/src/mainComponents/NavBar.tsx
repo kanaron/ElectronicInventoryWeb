@@ -40,6 +40,15 @@ export default observer(function NavBar() {
             to="/addItem"
           />
         </Menu.Item>
+        <Menu.Item>
+          <Button
+            positive
+            icon="database"
+            content="Projects"
+            as={NavLink}
+            to="/project"
+          />
+        </Menu.Item>
 
         <Menu.Menu position="right">
           <Menu.Item>

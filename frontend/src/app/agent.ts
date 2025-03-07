@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { store } from "./stores/store";
 import { router } from "./router/Routes";
 import { ServerError } from "../models/serverError";
+import { ProjectItem } from "../models/projectItem";
 
 axios.defaults.baseURL = "https://localhost:7000/api";
 
@@ -83,6 +84,13 @@ const InventoryItems = {
     axios.get<InventoryItem>(`/Inventory/FetchFromTmeQrCode?qrCode=${qrCode}`),
 };
 
+const Projects = {
+  list: () => requests.get<ProjectItem[]>("/Project/GetProjects"),
+  update: (project: ProjectItem) =>
+    axios.put(`/Project/UpdateProject/${project.id}`),
+  delete: (id: string) => axios.delete(`/Project/DeleteProject/${id}`),
+};
+
 const Account = {
   current: () => requests.get<User>("/Account"),
   login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
@@ -93,6 +101,7 @@ const Account = {
 const agent = {
   InventoryItems,
   Account,
+  Projects,
 };
 
 export default agent;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InventoryItem } from "../../models/InventoryItem";
 import {
   Button,
@@ -17,11 +17,7 @@ import {
 import { useStore } from "../../app/stores/store";
 import { NavLink } from "react-router-dom";
 
-interface Props {
-  inventoryItems: InventoryItem[];
-}
-
-export default function InventoryItemList({ inventoryItems }: Props) {
+export default function InventoryItemList() {
   const { inventoryStore } = useStore();
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,7 +73,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
     setShowInactive((prev) => !prev);
   };
 
-  const filteredItems = inventoryItems.filter((item) => {
+  const filteredItems = inventoryStore.items.filter((item) => {
     const matchesSearch =
       searchTerm === "" ||
       item.type.toLowerCase().includes(searchTerm) ||
@@ -96,7 +92,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
   });
 
   const categoryOptions = Array.from(
-    new Set(inventoryItems.map((item) => item.category))
+    new Set(inventoryStore.items.map((item) => item.category))
   ).map((category) => ({
     key: category,
     text: category,

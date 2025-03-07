@@ -9,6 +9,4 @@ public class ProjectDto
     public string Category { get; set; } = string.Empty;
     public string? Description { get; set; }
     public bool IsFinished { get; set; } = false;
-
-    public ICollection<BomItem> BomItems { get; set; }
 }
