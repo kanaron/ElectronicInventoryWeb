@@ -1,4 +1,5 @@
 ﻿using Domain.Dto;
+using Domain.Mappers;
 using MediatR;
 using Persistence;
 
@@ -31,10 +32,14 @@ public class EditInventoryItem
                 return;
             }
 
+            var (standardValue, standardUnit, rawValue) = InventoryMappers.NormalizeComponentValue(request.ItemDto.Value);
+
             itemToEdit.Type = request.ItemDto.Type;
             itemToEdit.Symbol = request.ItemDto.Symbol;
             itemToEdit.Category = request.ItemDto.Category;
-            itemToEdit.Value = request.ItemDto.Value;
+            itemToEdit.Value = rawValue;
+            itemToEdit.StandardValue = standardValue;
+            itemToEdit.StandardUnit = standardUnit;
             itemToEdit.Package = request.ItemDto.Package;
             itemToEdit.Quantity = request.ItemDto.Quantity;
             itemToEdit.Location = request.ItemDto.Location;

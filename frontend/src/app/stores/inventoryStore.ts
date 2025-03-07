@@ -61,9 +61,12 @@ export default class InventoryStore {
   addOrUpdateItem = async (item: InventoryItem) => {
     this.loading = true;
     try {
-      this.editMode
-        ? await agent.InventoryItems.update(item)
-        : await agent.InventoryItems.create(item);
+      if (this.editMode) {
+        await agent.InventoryItems.update(item);
+      } else {
+        const { id, ...newItem } = item;
+        await agent.InventoryItems.create(newItem);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -76,7 +79,11 @@ export default class InventoryStore {
   removeItem = async (item: InventoryItem) => {
     this.loading = true;
     try {
-      await agent.InventoryItems.delete(item.id);
+      if (item.id) {
+        await agent.InventoryItems.delete(item.id);
+      } else {
+        console.error("Cannot delete item without an id");
+      }
       this.loadItems();
     } catch (error) {
       console.error(error);

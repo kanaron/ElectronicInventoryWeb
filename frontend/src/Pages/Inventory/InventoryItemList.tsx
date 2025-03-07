@@ -173,9 +173,9 @@ export default function InventoryItemList({ inventoryItems }: Props) {
                     <Button
                       secondary
                       icon="info"
-                      onClick={() => toggleRow(item.id.toString())}
+                      onClick={() => toggleRow(item.id!.toString())}
                       content={
-                        expandedRow === item.id.toString()
+                        expandedRow === item.id!.toString()
                           ? "Hide Details"
                           : "Details"
                       }
@@ -193,7 +193,7 @@ export default function InventoryItemList({ inventoryItems }: Props) {
               </Table.Row>
 
               {/* Expanded Row */}
-              {expandedRow === item.id.toString() && (
+              {expandedRow === item.id!.toString() && (
                 <Table.Row>
                   <TableCell colSpan="7">
                     <div

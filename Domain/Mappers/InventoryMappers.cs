@@ -16,8 +16,6 @@ public static class InventoryMappers
             Symbol = item.Symbol,
             Category = item.Category,
             Value = item.Value,
-            StandardUnit = item.StandardUnit,
-            StandardValue = item.StandardValue,
             Package = item.Package,
             Quantity = item.Quantity,
             Location = item.Location,
@@ -35,15 +33,17 @@ public static class InventoryMappers
 
     public static InventoryItem ToInventoryItem(this InventoryItemDto item)
     {
+        var (standardValue, standardUnit, rawValue) = NormalizeComponentValue(item.Value);
+
         return new InventoryItem
         {
             Id = item.Id,
             Type = item.Type,
             Symbol = item.Symbol,
             Category = item.Category,
-            Value = item.Value,
-            StandardUnit = item.StandardUnit,
-            StandardValue = item.StandardValue,
+            Value = rawValue,
+            StandardUnit = standardUnit,
+            StandardValue = standardValue,
             Package = item.Package,
             Quantity = item.Quantity,
             Location = item.Location,
@@ -86,16 +86,12 @@ public static class InventoryMappers
 
     public static InventoryItemDto FromTmeToInventoryItemDto(ProductWithDescription descriptionItem, ProductWithParameters parametersItem)
     {
-        var (standardValue, standardUnit, rawValue) = GetValueFromParameters(parametersItem);
-
         return new InventoryItemDto
         {
             Type = descriptionItem.Category ?? string.Empty,
             Symbol = descriptionItem.Symbol!,
             Category = ExtractCategory(descriptionItem.Category),
-            Value = rawValue, 
-            StandardValue = standardValue, 
-            StandardUnit = standardUnit, 
+            Value = GetValueFromParameters(parametersItem), 
             Package = GetPackageFromParameters(parametersItem),
             Quantity = 0,
             DatasheetLink = string.Empty,
@@ -124,7 +120,7 @@ public static class InventoryMappers
         return packageParameter?.ParameterValue ?? "Unknown";
     }
 
-    private static (double StandardValue, string StandardUnit, string RawValue) GetValueFromParameters(ProductWithParameters parametersItem)
+    private static string GetValueFromParameters(ProductWithParameters parametersItem)
     {
         var prioritizedParameterNames = new List<string>
     {
@@ -138,11 +134,11 @@ public static class InventoryMappers
 
             if (matchedParameter != null)
             {
-                return NormalizeComponentValue(matchedParameter.ParameterValue ?? "Unknown");
+                return matchedParameter.ParameterValue ?? "Unknown";
             }
         }
 
-        return (0, "", "N/A");
+        return ("N/A");
     }
 
     private static string ExtractCategory(string? fullCategory)

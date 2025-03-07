@@ -62,7 +62,6 @@ public class InventoryController : BaseApiController
             return BadRequest("Item can not be null");
         }
 
-        var item = itemDto.ToInventoryItem();
         var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
         if (string.IsNullOrEmpty(userId))
@@ -70,6 +69,7 @@ public class InventoryController : BaseApiController
             return Unauthorized("User ID not found in token");
         }
 
+        var item = itemDto.ToInventoryItem();
         item.UserId = userId;
 
         var existingItem = await Mediator.Send(new ItemDuplicateFind.Query
