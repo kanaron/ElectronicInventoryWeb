@@ -86,8 +86,30 @@ const InventoryItems = {
 
 const Projects = {
   list: () => requests.get<ProjectItem[]>("/Project/GetProjects"),
+  create: (
+    file: File,
+    projectName: string,
+    category: string,
+    description?: string
+  ) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("projectName", projectName);
+    formData.append("category", category);
+    if (description) {
+      formData.append("description", description);
+    }
+
+    return axios
+      .post(`/Bom/UploadBomFile`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(responseBody);
+  },
   update: (project: ProjectItem) =>
-    axios.put(`/Project/UpdateProject/${project.id}`),
+    axios.put(`/Project/UpdateProject/${project.id}`, project),
   delete: (id: string) => axios.delete(`/Project/DeleteProject/${id}`),
 };
 

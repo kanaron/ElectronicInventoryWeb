@@ -4,10 +4,11 @@ import { ProjectItem } from "../../models/projectItem";
 
 export default class ProjectStore {
   projects: ProjectItem[] = [];
-  selectedProject: ProjectItem | undefined = undefined;
+  filteredProjects: ProjectItem[] = [];
   editMode = false;
   loading = false;
   loadingInitial = false;
+  showFinished = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -19,15 +20,27 @@ export default class ProjectStore {
     try {
       const loadedProjects = await agent.Projects.list();
       runInAction(() => {
-        this.projects = loadedProjects.map((project) => ({
-          ...project,
-        }));
+        this.projects = loadedProjects;
+        this.filteredProjects = this.showFinished
+          ? this.projects
+          : this.projects.filter((item) => !item.isFinished);
         this.setLoadingInitial(false);
       });
     } catch (error) {
       console.error(error);
       this.setLoadingInitial(false);
     }
+  };
+
+  setShowFinished = (show: boolean) => {
+    this.showFinished = show;
+    console.log(this.showFinished);
+
+    runInAction(() => {
+      this.filteredProjects = this.showFinished
+        ? this.projects
+        : this.projects.filter((item) => !item.isFinished);
+    });
   };
 
   setLoadingInitial = (state: boolean) => {
@@ -38,30 +51,18 @@ export default class ProjectStore {
     this.loading = state;
   };
 
-  selectProject = (id: string) => {
-    this.selectedProject = this.projects.find((x) => x.id === id);
-  };
-
-  openForm = (id?: string) => {
-    id ? this.selectProject(id) : this.cancelSelectedItem();
-    id ? (this.editMode = true) : (this.editMode = false);
-  };
-
-  closeForm = () => {
-    this.cancelSelectedItem();
-    this.editMode = false;
-  };
-
-  cancelSelectedItem = () => {
-    this.selectedProject = undefined;
-  };
-
-  addOrUpdateProject = async (project: ProjectItem) => {
+  addOrUpdateProject = async (project: ProjectItem, file: File | undefined) => {
     this.loading = true;
     try {
-      /*this.editMode
+      console.log(file?.name);
+      this.editMode
         ? await agent.Projects.update(project)
-        : await agent.Projects.create(project);*/
+        : await agent.Projects.create(
+            file!,
+            project.name,
+            project.category,
+            project.description
+          );
     } catch (error) {
       console.error(error);
     } finally {
