@@ -4,11 +4,7 @@ import { useStore } from "../app/stores/store";
 import { observer } from "mobx-react-lite";
 
 export default observer(function NavBar() {
-  const { inventoryStore, userStore } = useStore();
-
-  const handleAddItem = () => {
-    inventoryStore.openForm();
-  };
+  const { userStore } = useStore();
 
   const handleLogout = () => {
     userStore.logout();
@@ -28,16 +24,6 @@ export default observer(function NavBar() {
             content="Inventory"
             as={NavLink}
             to="/inventory"
-          />
-        </Menu.Item>
-        <Menu.Item>
-          <Button
-            positive
-            icon="plus"
-            content="Add item"
-            onClick={() => handleAddItem()}
-            as={NavLink}
-            to="/addItem"
           />
         </Menu.Item>
         <Menu.Item>

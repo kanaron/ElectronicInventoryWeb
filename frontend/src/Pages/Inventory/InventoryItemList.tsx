@@ -73,6 +73,10 @@ export default function InventoryItemList() {
     setShowInactive((prev) => !prev);
   };
 
+  const handleAddItem = () => {
+    inventoryStore.openForm();
+  };
+
   const filteredItems = inventoryStore.items.filter((item) => {
     const matchesSearch =
       searchTerm === "" ||
@@ -125,6 +129,14 @@ export default function InventoryItemList() {
             Show Inactive
           </label>
         </div>
+        <Button
+          positive
+          icon="plus"
+          content="Add item"
+          onClick={() => handleAddItem()}
+          as={NavLink}
+          to="/addItem"
+        />
       </div>
 
       <Table celled>

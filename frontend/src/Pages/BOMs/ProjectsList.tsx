@@ -133,8 +133,8 @@ export default function ProjectsList() {
             Show Finished
           </label>
           <Button
-            primary
-            icon="create"
+            positive
+            icon="plus"
             onClick={() => openUploadModal()}
             content="Upload BOM"
             size="small"
