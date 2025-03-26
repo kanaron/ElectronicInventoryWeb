@@ -15,7 +15,9 @@ using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DbContextConnection") ?? throw new InvalidOperationException("No connection string");
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ??
+    builder.Configuration.GetConnectionString("DbContextConnection") ??
+    throw new InvalidOperationException("No connection string");
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
