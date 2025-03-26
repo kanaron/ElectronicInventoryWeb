@@ -401,3 +401,4 @@ appsettings.json
 appsettings.Development.json
 appsettings.Production.json
 
+api/appsettings.json
