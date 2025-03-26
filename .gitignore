@@ -396,4 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/ElectronicInventoryWeb.Server/appsettings.json
+/ElectronicInventoryWeb/api/appsettings.json
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
