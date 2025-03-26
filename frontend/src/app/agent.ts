@@ -7,7 +7,7 @@ import { router } from "./router/Routes";
 import { ServerError } from "../models/serverError";
 import { ProjectItem } from "../models/projectItem";
 
-axios.defaults.baseURL = "https://localhost:7000/api";
+axios.defaults.baseURL = "http://localhost:5000/api";
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
