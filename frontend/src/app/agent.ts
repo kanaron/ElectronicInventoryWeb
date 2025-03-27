@@ -7,7 +7,7 @@ import { router } from "./router/Routes";
 import { ServerError } from "../models/serverError";
 import { ProjectItem } from "../models/projectItem";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
