@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000", "http://192.168.0.52:3000");
     });
 });
 
