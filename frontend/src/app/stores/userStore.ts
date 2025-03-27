@@ -44,4 +44,18 @@ export default class UserStore {
     router.navigate("/");
     console.log(user);
   };
+
+  updateTmeToken = async (token: string) => {
+    if (!this.user) return;
+
+    runInAction(() => {
+      this.user!.tmeToken = token;
+    });
+
+    try {
+      await agent.Account.updateTmeToken(this.user!);
+    } catch (error) {
+      console.error("Error updating TME token", error);
+    }
+  };
 }

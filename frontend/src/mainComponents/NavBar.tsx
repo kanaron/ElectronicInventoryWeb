@@ -41,6 +41,12 @@ export default observer(function NavBar() {
             <Dropdown pointing="top left" text={userStore.user?.userName}>
               <Dropdown.Menu>
                 <Dropdown.Item
+                  as={NavLink}
+                  to="/userSettings"
+                  text="Settings"
+                  icon="settings"
+                />
+                <Dropdown.Item
                   onClick={handleLogout}
                   text="Logout"
                   icon="power"

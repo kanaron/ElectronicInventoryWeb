@@ -11,4 +11,6 @@ public class User : IdentityUser
 
     public ICollection<InventoryItem> InventoryItems { get; set; }
     public ICollection<Project> Projects { get; set; }
+
+    //public string tmeToken { get; set; }
 }

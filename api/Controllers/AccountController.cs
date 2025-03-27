@@ -95,9 +95,11 @@ public class AccountController : ControllerBase
 
         return Ok(new NewUser
         {
+            //Id = user.Id,
             UserName = user.UserName,
             Email = user.Email,
-            Token = tokenService.CreateToken(user)
+            Token = tokenService.CreateToken(user),
+            //TmeToken = user.tmeToken
         });
     }
 }
