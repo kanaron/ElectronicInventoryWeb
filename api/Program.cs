@@ -3,6 +3,7 @@ using API.Middleware;
 using API.Service;
 using Application.InventoryItems;
 using Domain.Data;
+using Infrastructure.TmeTokenEncryptionService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -108,6 +109,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<TmeApiService>();
 builder.Services.AddScoped<IBomService, BomService>();
+builder.Services.AddScoped<ITmeTokenEncryptionService, TmeTokenEncryptionService>();
 
 var app = builder.Build();
 

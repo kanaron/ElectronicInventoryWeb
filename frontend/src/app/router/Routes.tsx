@@ -7,6 +7,7 @@ import RegisterForm from "../../Pages/Account/RegisterForm";
 import ItemDetailsCard from "../../Pages/Inventory/ItemDetailsCard";
 import ServerErrors from "../../Pages/errors/ServerErrors";
 import ProjectsPage from "../../Pages/BOMs/ProjectsPage";
+import UserSettingsPage from "../../Pages/User/UserSettingsPage";
 
 export const routes: RouteObject[] = [
   {
@@ -17,6 +18,7 @@ export const routes: RouteObject[] = [
       { path: "inventory", element: <InventoryPage /> },
       { path: "addItem", element: <ItemDetailsCard /> },
       { path: "project", element: <ProjectsPage /> },
+      { path: "userSettings", element: <UserSettingsPage /> },
       { path: "login", element: <LoginForm /> },
       { path: "register", element: <RegisterForm /> },
       { path: "server-error", element: <ServerErrors /> },

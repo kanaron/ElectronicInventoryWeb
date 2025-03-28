@@ -19,14 +19,14 @@ public class TmeApiService
         _configuration = config;
     }
 
-    public async Task<ProductWithParameters?> GetProductWithParametersAsync(string symbol)
+    public async Task<ProductWithParameters?> GetProductWithParametersAsync(string token, string symbol)
     {
         var queryParams = new Dictionary<string, string>
     {
         { "Country", "PL" },
         { "Language", "en" },
         { "SymbolList[0]", symbol },
-        { "Token", _configuration["TmeApi:Token"]! }
+        { "Token", token }
     };
 
         var response = await ApiCall("Products/GetParameters", queryParams);
@@ -54,14 +54,14 @@ public class TmeApiService
         };
     }
 
-    public async Task<ProductWithDescription?> GetProductWithDescriptionAsync(string symbol)
+    public async Task<ProductWithDescription?> GetProductWithDescriptionAsync(string token, string symbol)
     {
         var queryParams = new Dictionary<string, string>
     {
         { "Country", "PL" },
         { "Language", "en" },
         { "SymbolList[0]", symbol },
-        { "Token", _configuration["TmeApi:Token"]! }
+        { "Token", token }
     };
 
         var response = await ApiCall("Products/GetProducts", queryParams);

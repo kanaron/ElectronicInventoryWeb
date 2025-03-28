@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250313190838_AddMatchingInventoryItemIds")]
+    partial class AddMatchingInventoryItemIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,9 +120,6 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservedForProjects")
                         .HasColumnType("int");
 
                     b.Property<string>("StandardUnit")
@@ -282,10 +282,6 @@ namespace Persistence.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("tmeToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -328,13 +324,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9e44495d-72b1-4b95-8713-f90dd17a31ec",
+                            Id = "099d1e96-c882-4bfb-9402-bc26d31cdb56",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4c388f96-e99c-414b-9822-a39940f602ba",
+                            Id = "e78bb84e-490d-4023-b0cb-59b92989b89e",
                             Name = "User",
                             NormalizedName = "USER"
                         });

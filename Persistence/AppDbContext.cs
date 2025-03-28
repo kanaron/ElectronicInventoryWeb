@@ -63,5 +63,14 @@ public class AppDbContext : IdentityDbContext<User>
         builder.Entity<Subscription>()
         .Property(s => s.Price)
         .HasPrecision(6, 2);
+
+        builder.Entity<BomItem>()
+            .Property(b => b.MatchingInventoryItemIds)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(Guid.Parse)
+                    .ToList()
+            );
     }
 }

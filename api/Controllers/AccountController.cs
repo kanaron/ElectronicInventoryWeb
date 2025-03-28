@@ -1,6 +1,10 @@
 ﻿using API.Interfaces;
 using API.Models;
+using Application.Account;
 using Domain.Data;
+using Domain.Dto;
+using Infrastructure.TmeTokenEncryptionService;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +15,18 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController : BaseApiController
 {
     private readonly UserManager<User> userManager;
     private readonly ITokenService tokenService;
+    private readonly ITmeTokenEncryptionService tmeTokenEncryptionService;
     private readonly SignInManager<User> signInManager;
 
-    public AccountController(UserManager<User> _userManager, ITokenService _tokenService, SignInManager<User> _signInManager)
+    public AccountController(UserManager<User> _userManager, ITokenService _tokenService, ITmeTokenEncryptionService _tmeTokenEncryptionService, SignInManager<User> _signInManager)
     {
         userManager = _userManager;
         tokenService = _tokenService;
+        tmeTokenEncryptionService = _tmeTokenEncryptionService;
         signInManager = _signInManager;
     }
 
@@ -93,13 +99,26 @@ public class AccountController : ControllerBase
 
         if (user == null) return NotFound();
 
-        return Ok(new NewUser
+        var decrypted = tmeTokenEncryptionService.Decrypt(user.tmeToken);
+
+        return Ok(new UserDto
         {
-            //Id = user.Id,
             UserName = user.UserName,
             Email = user.Email,
             Token = tokenService.CreateToken(user),
-            //TmeToken = user.tmeToken
+            TmeToken = decrypted
         });
+    }
+
+    [Authorize]
+    [HttpPut]
+    [Route("UpdateTmeToken")]
+    public async Task<ActionResult<UserDto>> UpdateUpdateTmeToken([FromBody] UserDto user, CancellationToken cancellationToken)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+        await Mediator.Send(new UpdateTmeToken.Command { UserDto = user, Id = userId! }, cancellationToken);
+
+        return Ok();
     }
 }

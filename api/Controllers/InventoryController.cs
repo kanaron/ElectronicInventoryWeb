@@ -2,8 +2,9 @@
 using Application.InventoryItems;
 using Domain.Dto;
 using Domain.Mappers;
-using Microsoft.AspNetCore.Authorization;
+using Infrastructure.TmeTokenEncryptionService;
 using Microsoft.AspNetCore.Mvc;
+using Persistence;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers;
@@ -11,10 +12,14 @@ namespace API.Controllers;
 public class InventoryController : BaseApiController
 {
     private readonly TmeApiService _tmeApiService;
+    private readonly AppDbContext _context;
+    private readonly ITmeTokenEncryptionService _tokenEncryptionService;
 
-    public InventoryController(TmeApiService tmeApiService)
+    public InventoryController(TmeApiService tmeApiService, AppDbContext context, ITmeTokenEncryptionService tmeTokenEncryptionService)
     {
         _tmeApiService = tmeApiService;
+        _context = context;
+        _tokenEncryptionService = tmeTokenEncryptionService;
     }
 
     [HttpGet("[action]")]
@@ -127,8 +132,22 @@ public class InventoryController : BaseApiController
             return BadRequest("Symbol cannot be empty.");
         }
 
-        var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(symbol);
-        var productParameters = await _tmeApiService.GetProductWithParametersAsync(symbol);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID not found in token");
+        }
+
+        var user = await _context.Users.FindAsync(userId);
+
+        if (user == null || string.IsNullOrEmpty(user.tmeToken))
+            return Unauthorized("No TME token found for the user");
+
+        var decryptedToken = _tokenEncryptionService.Decrypt(user.tmeToken);
+
+        var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(decryptedToken, symbol);
+        var productParameters = await _tmeApiService.GetProductWithParametersAsync(decryptedToken, symbol);
 
         if (productDescription == null || productParameters == null)
         {
@@ -156,8 +175,22 @@ public class InventoryController : BaseApiController
             var qty = int.Parse(match.Groups[1].Value);
             var symbol = match.Groups[2].Value;
 
-            var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(symbol);
-            var productParameters = await _tmeApiService.GetProductWithParametersAsync(symbol);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null || string.IsNullOrEmpty(user.tmeToken))
+                return Unauthorized("No TME token found for the user");
+
+            var decryptedToken = _tokenEncryptionService.Decrypt(user.tmeToken);
+
+            var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(decryptedToken, symbol);
+            var productParameters = await _tmeApiService.GetProductWithParametersAsync(decryptedToken, symbol);
 
             if (productDescription == null || productParameters == null)
             {
