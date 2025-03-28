@@ -21,7 +21,7 @@ export default observer(function NavBar() {
           <Button
             positive
             icon="database"
-            content="InventoryTT"
+            content="Kaboom"
             as={NavLink}
             to="/inventory"
           />
