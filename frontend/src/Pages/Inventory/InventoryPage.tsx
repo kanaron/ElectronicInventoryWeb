@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Container, Segment } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import InventoryItemList from "./InventoryItemList";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import { useStore } from "../../app/stores/store";
