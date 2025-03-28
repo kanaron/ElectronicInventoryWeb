@@ -7,14 +7,8 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-    - name: SSH into Raspberry Pi and run deploy script
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.PI_SSH_HOST }}
-        username: ${{ secrets.PI_SSH_USER }}
-        key: ${{ secrets.PI_SSH_PRIVATE_KEY }}
-        script: |
-          bash /home/pi/deployElecInv.sh
+      - name: Run deploy script locally on the Pi
+        run: bash /home/pi/deployElecInv.sh
