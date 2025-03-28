@@ -10,5 +10,25 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Notify Discord - Starting deploy
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "🚀 Starting deployment on Pi..."}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
       - name: Run deploy script locally on the Pi
         run: bash /home/pi/deployElecInv.sh
+
+      - name: Notify Discord - Deploy success
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "✅ Deployment **succeeded** on Pi!"}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify Discord - Deploy failed
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "❌ Deployment **failed** on Pi!"}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
