@@ -118,6 +118,8 @@ const Account = {
   login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
   register: (user: UserFormValues) =>
     requests.post<User>("/Account/Register", user),
+  updateTmeToken: (user: User) =>
+    axios.put(`/Account/UpdateTmeToken/${user.id}`, user),
 };
 
 const agent = {
