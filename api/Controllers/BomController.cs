@@ -1,7 +1,7 @@
 ﻿using API.Interfaces;
 using Application.BomItems;
+using Application.InventoryItems;
 using Domain.Dto;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -17,7 +17,7 @@ public class BomController : BaseApiController
 
     [HttpPost("[action]")]
     [Consumes("multipart/form-data")]
-    public async Task<ActionResult<ProjectDto>> UploadBomFile(IFormFile file, [FromForm] string projectName, [FromForm] string category, 
+    public async Task<ActionResult<ProjectDto>> UploadBomFile(IFormFile file, [FromForm] string projectName, [FromForm] string category,
         [FromForm] string? description, CancellationToken cancellationToken)
     {
         if (file == null || file.Length == 0)
@@ -43,4 +43,18 @@ public class BomController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("[action]/{id}")]
+    public async Task<ActionResult<IEnumerable<BomItemDto>>> GetBomItems([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID not found in token");
+        }
+
+        return await Mediator.Send(new BomItemsList.Query { ProjectId = id }, cancellationToken);
+    }
+
 }

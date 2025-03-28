@@ -14,9 +14,10 @@ import {
 } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { ProjectItem } from "../../models/projectItem";
+import { NavLink } from "react-router-dom";
 
 export default function ProjectsList() {
-  const { projectStore } = useStore();
+  const { projectStore, bomStore } = useStore();
   const [showFinished, setShowFinished] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -120,13 +121,17 @@ export default function ProjectsList() {
     setBomFile(undefined);
   };
 
+  const handleBom = (project: ProjectItem) => {
+    bomStore.setSelectedProject(project);
+  };
+
   return (
     <div>
       <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
           <Checkbox
             toggle
-            checked={!showFinished}
+            checked={projectStore.showFinished}
             onChange={handleShowFinished}
           />
           <label style={{ fontSize: "14px", color: "#f9f9f9" }}>
@@ -148,7 +153,6 @@ export default function ProjectsList() {
             <Table.HeaderCell content="Name" />
             <Table.HeaderCell content="Category" />
             <Table.HeaderCell content="Description" />
-            <Table.HeaderCell content="IsFinished" />
           </TableRow>
         </TableHeader>
 
@@ -159,9 +163,17 @@ export default function ProjectsList() {
                 <TableCell content={project.name} />
                 <TableCell content={project.category} />
                 <TableCell content={project.description} />
-                <TableCell content={project.isFinished ? "Yes" : "No"} />
                 <TableCell>
                   <div style={{ display: "flex", alignItems: "center" }}>
+                    <Button
+                      positive
+                      icon="arrow"
+                      onClick={() => handleBom(project)}
+                      content="Go to project"
+                      size="small"
+                      as={NavLink}
+                      to="/bomItems"
+                    />
                     <Button
                       primary
                       icon="edit"

@@ -1,25 +1,25 @@
 import React, { useEffect } from "react";
-import { Container, Segment } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import LoadingComponent from "../../mainComponents/LoadingComponent";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import ProjectsList from "./ProjectsList";
+import BomList from "./BomList";
 
-const ProjectsPage: React.FC = () => {
-  const { projectStore } = useStore();
+const BomPage: React.FC = () => {
+  const { bomStore } = useStore();
 
   useEffect(() => {
-    projectStore.loadProjects();
-  }, [projectStore]);
+    bomStore.loadBomItems();
+  }, [bomStore]);
 
-  if (projectStore.loadingInitial)
+  if (bomStore.loadingInitial)
     return <LoadingComponent content="Loading data" />;
 
   return (
     <Container fluid style={{ marginTop: "7em", padding: "0 2em" }}>
-      <ProjectsList />
+      <BomList />
     </Container>
   );
 };
 
-export default observer(ProjectsPage);
+export default observer(BomPage);

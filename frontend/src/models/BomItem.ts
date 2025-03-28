@@ -1,3 +1,5 @@
+import { InventoryItem } from "./InventoryItem";
+
 export interface BomItem {
   id: string;
   category: string;
@@ -8,4 +10,5 @@ export interface BomItem {
   description: string;
   isRelevant: boolean;
   isPlaced: boolean;
+  matchingItems: InventoryItem[];
 }

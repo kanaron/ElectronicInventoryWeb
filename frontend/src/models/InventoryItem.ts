@@ -6,6 +6,7 @@ export interface InventoryItem {
   value: string;
   package: string;
   quantity: number;
+  reservedForProjects: number;
   location: string;
   datasheetLink: string;
   storeLink: string;

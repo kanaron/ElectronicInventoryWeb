@@ -103,3 +103,16 @@ body {
   transform: scale(1.07) !important;
   box-shadow: 0 5px 10px rgba(255, 255, 255, 0.3) !important;
 }
+
+.ui.celled.table td.references-column,
+.ui.celled.table td.category-column,
+.ui.celled.table td.value-column,
+.ui.celled.table td.package-column,
+.ui.celled.table td.description-column {
+  max-width: 200px; /* Set a max width */
+  word-break: break-word; /* Allow breaking long words */
+  overflow-wrap: anywhere; /* Allow breaking at any character */
+  white-space: normal !important; /* Override default behavior */
+  overflow: visible !important; /* Ensure full visibility */
+  text-overflow: clip !important; /* Prevent "..." */
+}

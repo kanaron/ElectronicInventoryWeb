@@ -11,6 +11,7 @@ public class InventoryItem
     public string StandardUnit { get; set; } = string.Empty;
     public string Package { get; set; } = string.Empty;
     public int Quantity { get; set; }
+    public int ReservedForProjects { get; set; }
     public string Location { get; set; } = "Default";
     public string DatasheetLink { get; set; } = string.Empty;
     public string StoreLink { get; set; } = string.Empty;

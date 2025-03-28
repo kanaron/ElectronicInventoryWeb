@@ -6,6 +6,7 @@ import { store } from "./stores/store";
 import { router } from "./router/Routes";
 import { ServerError } from "../models/serverError";
 import { ProjectItem } from "../models/projectItem";
+import { BomItem } from "../models/BomItem";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -113,6 +114,11 @@ const Projects = {
   delete: (id: string) => axios.delete(`/Project/DeleteProject/${id}`),
 };
 
+const BomItems = {
+  list: (id: string) => axios.get<BomItem[]>(`/Bom/GetBomItems/${id}`),
+  update: (item: BomItem) => axios.put(`/Bom/UpdateBomItem/${item.id}`, item),
+};
+
 const Account = {
   current: () => requests.get<User>("/Account"),
   login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
@@ -125,6 +131,7 @@ const agent = {
   InventoryItems,
   Account,
   Projects,
+  BomItems,
 };
 
 export default agent;

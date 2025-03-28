@@ -145,6 +145,7 @@ export default function InventoryItemList() {
             <Table.HeaderCell content="Photo" />
             <Table.HeaderCell content="Category" />
             <Table.HeaderCell content="Quantity" />
+            <Table.HeaderCell content="Reserved" />
             <Table.HeaderCell content="Type" />
             <Table.HeaderCell content="Value" />
             <Table.HeaderCell content="Package" />
@@ -163,6 +164,7 @@ export default function InventoryItemList() {
                 </TableCell>
                 <TableCell content={item.category} />
                 <TableCell content={item.quantity} />
+                <TableCell content={item.reservedForProjects} />
                 <TableCell content={item.type} />
                 <TableCell content={item.value} />
                 <TableCell content={item.package} />
