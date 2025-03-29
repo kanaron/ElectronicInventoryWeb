@@ -14,7 +14,7 @@ public class TokenService : ITokenService
     public TokenService(IConfiguration config)
     {
         _configuration = config;
-        _key = new(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:SigningKey"]));
+        _key = new(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
     }
 
     public string CreateToken(User user)
