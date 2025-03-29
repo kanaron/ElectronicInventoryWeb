@@ -141,10 +141,10 @@ public class InventoryController : BaseApiController
 
         var user = await _context.Users.FindAsync(userId);
 
-        if (user == null || string.IsNullOrEmpty(user.tmeToken))
+        if (user == null || string.IsNullOrEmpty(user.TmeToken))
             return Unauthorized("No TME token found for the user");
 
-        var decryptedToken = _tokenEncryptionService.Decrypt(user.tmeToken);
+        var decryptedToken = _tokenEncryptionService.Decrypt(user.TmeToken);
 
         var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(decryptedToken, symbol);
         var productParameters = await _tmeApiService.GetProductWithParametersAsync(decryptedToken, symbol);
@@ -184,10 +184,10 @@ public class InventoryController : BaseApiController
 
             var user = await _context.Users.FindAsync(userId);
 
-            if (user == null || string.IsNullOrEmpty(user.tmeToken))
+            if (user == null || string.IsNullOrEmpty(user.TmeToken))
                 return Unauthorized("No TME token found for the user");
 
-            var decryptedToken = _tokenEncryptionService.Decrypt(user.tmeToken);
+            var decryptedToken = _tokenEncryptionService.Decrypt(user.TmeToken);
 
             var productDescription = await _tmeApiService.GetProductWithDescriptionAsync(decryptedToken, symbol);
             var productParameters = await _tmeApiService.GetProductWithParametersAsync(decryptedToken, symbol);

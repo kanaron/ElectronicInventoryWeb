@@ -99,7 +99,7 @@ public class AccountController : BaseApiController
 
         if (user == null) return NotFound();
 
-        var decrypted = tmeTokenEncryptionService.Decrypt(user.tmeToken);
+        var decrypted = tmeTokenEncryptionService.Decrypt(user.TmeToken);
 
         return Ok(new UserDto
         {

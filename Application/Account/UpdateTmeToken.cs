@@ -34,7 +34,7 @@ public class UpdateTmeToken
                 return;
             }
 
-            userToEdit.tmeToken = _encryptionService.Encrypt(request.UserDto.TmeToken);
+            userToEdit.TmeToken = _encryptionService.Encrypt(request.UserDto.TmeToken);
 
             await _appDbContext.SaveChangesAsync(cancellationToken);
         }
