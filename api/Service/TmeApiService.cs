@@ -118,7 +118,7 @@ public class TmeApiService
         string signatureBase = $"POST&{escapedUri}&{escapedParams}";
 
         // Calculate HMAC-SHA1 from signature and encode by Base64 function
-        byte[] hmacSha1 = HashHmac(signatureBase, _configuration["TmeApi:AppSecret"]!);
+        byte[] hmacSha1 = HashHmac(signatureBase, _configuration["TME:AppSecret"]!);
         string apiSignature = Convert.ToBase64String(hmacSha1);
 
         // Add ApiSignature to params
