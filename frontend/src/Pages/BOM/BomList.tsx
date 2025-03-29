@@ -8,13 +8,13 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
-import { BomItem } from "../../models/BomItem";
+//import { BomItem } from "../../models/BomItem";
 import { observer } from "mobx-react-lite";
 
 export default observer(function BomList() {
   const { bomStore } = useStore();
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<BomItem | null>(null);
+  //const [selectedItem, setSelectedItem] = useState<BomItem | null>(null);
 
   const toggleRow = (id: string) => {
     setExpandedRow((prev) => (prev === id ? null : id));
