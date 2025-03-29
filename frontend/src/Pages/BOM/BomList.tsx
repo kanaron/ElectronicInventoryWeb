@@ -2,19 +2,12 @@ import React, { useState } from "react";
 import {
   Button,
   Checkbox,
-  Dropdown,
-  Header,
-  Image,
-  Input,
-  Modal,
-  ModalContent,
   Table,
   TableCell,
   TableHeader,
   TableRow,
 } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
-import { NavLink } from "react-router-dom";
 import { BomItem } from "../../models/BomItem";
 import { observer } from "mobx-react-lite";
 
