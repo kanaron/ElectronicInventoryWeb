@@ -11,7 +11,6 @@ export default class BomStore {
   loadingInitial = false;
   showIrrevelant = false;
   showPlaced = false;
-  areUnsavedChanges = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -25,11 +24,9 @@ export default class BomStore {
       const loadedBomItems = (await agent.BomItems.list(this.project?.id!))
         .data;
       console.log("number of items: " + this.bomItems.length);
-      //runInAction(() => {
       this.bomItems = loadedBomItems;
       this.setFilters();
       this.setLoadingInitial(false);
-      //});
     } catch (error) {
       console.error(error);
       this.setLoadingInitial(false);
@@ -65,7 +62,6 @@ export default class BomStore {
     const item = this.bomItems.find((i) => i.id === id);
     if (item) {
       item.isRelevant = !item.isRelevant;
-      this.areUnsavedChanges = true;
       this.setFilters();
     }
   };
@@ -74,7 +70,6 @@ export default class BomStore {
     const item = this.bomItems.find((i) => i.id === id);
     if (item) {
       item.isPlaced = !item.isPlaced;
-      this.areUnsavedChanges = true;
       this.setFilters();
     }
   };
@@ -92,10 +87,10 @@ export default class BomStore {
     console.log("Bom store set project: " + selectedProject?.name);
   };
 
-  updateBomItem = async (item: BomItem) => {
+  updateBomItems = async () => {
     this.loading = true;
     try {
-      await agent.BomItems.update(item);
+      await agent.BomItems.update(this.bomItems);
     } catch (error) {
       console.error(error);
     } finally {

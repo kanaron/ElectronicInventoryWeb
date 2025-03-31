@@ -24,6 +24,10 @@ export default observer(function BomList() {
     bomStore.setShowIrrelevant(!bomStore.showIrrevelant);
   };
 
+  const handleShowPlaced = () => {
+    bomStore.setShowPlaced(!bomStore.showPlaced);
+  };
+
   return (
     <div>
       <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
@@ -36,6 +40,25 @@ export default observer(function BomList() {
           <label style={{ fontSize: "14px", color: "#f9f9f9" }}>
             Show Irrelevant
           </label>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Checkbox
+            toggle
+            checked={bomStore.showPlaced}
+            onChange={handleShowPlaced}
+          />
+          <label style={{ fontSize: "14px", color: "#f9f9f9" }}>
+            Show Placed
+          </label>
+        </div>
+        <div>
+          <Button
+            primary
+            icon="save"
+            onClick={bomStore.updateBomItems}
+            content="Save changes"
+            size="medium"
+          />
         </div>
       </div>
 

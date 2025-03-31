@@ -116,7 +116,7 @@ const Projects = {
 
 const BomItems = {
   list: (id: string) => axios.get<BomItem[]>(`/Bom/GetBomItems/${id}`),
-  update: (item: BomItem) => axios.put(`/Bom/UpdateBomItem/${item.id}`, item),
+  update: (items: BomItem[]) => axios.put(`/Bom/UpdateBomItems`, items),
 };
 
 const Account = {

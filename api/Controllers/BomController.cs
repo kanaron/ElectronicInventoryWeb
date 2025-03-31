@@ -1,6 +1,7 @@
 ﻿using API.Interfaces;
 using Application.BomItems;
 using Application.InventoryItems;
+using Application.Projects;
 using Domain.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,4 +58,12 @@ public class BomController : BaseApiController
         return await Mediator.Send(new BomItemsList.Query { ProjectId = id }, cancellationToken);
     }
 
+    [HttpPut]
+    [Route("[action]")]
+    public async Task<ActionResult<IEnumerable<BomItemDto>>> UpdateBomItems([FromBody] List<BomItemDto> bomItems, CancellationToken cancellationToken)
+    {
+        await Mediator.Send(new EditBomItems.Command { BomItems = bomItems }, cancellationToken);
+
+        return Ok();
+    }
 }
