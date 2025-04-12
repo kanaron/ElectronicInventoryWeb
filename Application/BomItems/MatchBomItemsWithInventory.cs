@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System.Diagnostics;
 
 namespace Application.BomItems;
 
@@ -40,9 +39,7 @@ public class MatchBomItemsWithInventory
             foreach (var bom in project.BomItems)
             {
                 if (!bom.IsRelevant)
-                {
                     continue;
-                }
 
                 var matches = inventory
                     .Where(inv =>
@@ -51,14 +48,40 @@ public class MatchBomItemsWithInventory
                         AreValuesClose(inv.StandardValue, bom.StandardValue))
                     .ToList();
 
-                bom.MatchingInventoryItemIds = matches.Select(m => m.Id).ToList();
-
-                foreach (var match in matches)
+                if (matches.Any())
                 {
-                    if (!reservations.ContainsKey(match.Id))
-                        reservations[match.Id] = 0;
+                    bom.IsMatched = true;
+                    bom.MatchingInventoryItemIds = matches.Select(m => m.Id).ToList();
 
-                    reservations[match.Id] += bom.Quantity;
+                    foreach (var match in matches)
+                    {
+                        if (!reservations.ContainsKey(match.Id))
+                            reservations[match.Id] = 0;
+
+                        reservations[match.Id] += bom.Quantity;
+                    }
+
+                    if (bom.Category.Equals("Light emitting diode", StringComparison.OrdinalIgnoreCase))
+                    {
+                        bom.IsMatched = false;
+                    }
+                }
+                else
+                {
+                    bom.IsMatched = false;
+
+                    var sameCategoryFallback = inventory
+                        .Where(inv => inv.Category.Equals(bom.Category, StringComparison.OrdinalIgnoreCase))
+                        .Select(inv => inv.Id);
+
+                    var otherCategoryFallback = inventory
+                        .Where(inv => inv.Category.Equals("Other", StringComparison.OrdinalIgnoreCase))
+                        .Select(inv => inv.Id);
+
+                    bom.MatchingInventoryItemIds = sameCategoryFallback
+                        .Concat(otherCategoryFallback)
+                        .Distinct()
+                        .ToList();
                 }
             }
 
@@ -81,4 +104,3 @@ public class MatchBomItemsWithInventory
         }
     }
 }
-

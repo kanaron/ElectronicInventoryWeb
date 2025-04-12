@@ -17,4 +17,5 @@ public class BomItemDto
 
     public List<Guid> SelectedInventoryItemIds { get; set; } = [];
 
+    public bool IsMatched { get; set; } = false;
 }

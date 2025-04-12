@@ -116,3 +116,15 @@ body {
   overflow: visible !important; /* Ensure full visibility */
   text-overflow: clip !important; /* Prevent "..." */
 }
+
+.row-matched-single {
+  background-color: #d4edda !important; /* light green */
+}
+
+.row-matched-multiple {
+  background-color: #fff3cd !important; /* light yellow */
+}
+
+.row-unmatched {
+  background-color: #f8d7da !important; /* light red */
+}
