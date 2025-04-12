@@ -1,5 +1,5 @@
 export interface InventoryItem {
-  id?: string;
+  id: string;
   type: string;
   symbol: string;
   category: string;
@@ -18,3 +18,5 @@ export interface InventoryItem {
   dateAdded: string;
   lastUpdated: string;
 }
+
+export type InventoryItemCreate = Omit<InventoryItem, "id">;

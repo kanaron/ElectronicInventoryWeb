@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { InventoryItem } from "../models/InventoryItem";
+import { InventoryItem, InventoryItemCreate } from "../models/InventoryItem";
 import { User, UserFormValues } from "../models/User";
 import { toast } from "react-toastify";
 import { store } from "./stores/store";
@@ -71,7 +71,7 @@ const InventoryItems = {
   list: () => requests.get<InventoryItem[]>("/Inventory/GetInventoryItems"),
   details: (id: string) =>
     requests.get<InventoryItem>(`/Inventory/GetInventoryItem/${id}`),
-  create: (inventoryItem: InventoryItem) =>
+  create: (inventoryItem: InventoryItemCreate) =>
     axios.post(`/Inventory/AddInventoryItem`, inventoryItem),
   update: (inventoryItem: InventoryItem) =>
     axios.put(

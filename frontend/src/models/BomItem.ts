@@ -10,5 +10,6 @@ export interface BomItem {
   description: string;
   isRelevant: boolean;
   isPlaced: boolean;
+  matchingInventoryItemIds: string[];
   matchingItems: InventoryItem[];
 }

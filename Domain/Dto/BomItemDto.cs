@@ -12,5 +12,6 @@ public class BomItemDto
     public bool IsRelevant { get; set; } = true;
     public bool IsPlaced { get; set; } = false;
 
-    public List<Guid> MatchingInventoryItemIds { get; set; } = new();
+    public List<Guid> MatchingInventoryItemIds { get; set; } = [];
+    public List<InventoryItemDto> MatchingItems { get; set; } = [];
 }

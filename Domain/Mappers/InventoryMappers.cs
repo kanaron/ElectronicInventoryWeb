@@ -2,6 +2,7 @@
 using Domain.Dto;
 using Domain.TmeModels;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Domain.Mappers;
 
@@ -147,19 +148,34 @@ public static class InventoryMappers
 
     private static string ExtractCategory(string? fullCategory)
     {
-        if (string.IsNullOrEmpty(fullCategory))
+        if (string.IsNullOrWhiteSpace(fullCategory))
             return "Unknown";
 
         var categoryWords = fullCategory.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
+        if (categoryWords.Any(word => word.Contains("led")))
+            return "Light emitting diode";
+
+        if (categoryWords.Contains("diode") || categoryWords.Contains("zener"))
+            return "Diode";
+
+        if (categoryWords.Contains("mosfet"))
+            return "MOSFET";
+
+        if (categoryWords.Contains("transistor"))
+            return "Transistor";
+
+        if (categoryWords.Contains("regulator"))
+            return "Voltage regulator";
+
+        if (categoryWords.Contains("logic") || categoryWords.Contains("gate"))
+            return "Logic IC";
+
         if (capacitorUnpolarizedKeywords.Any(x => categoryWords.Contains(x)))
-        {
             return "Unpolarized capacitor";
-        }
-        else if (capacitorPolarizedKeywords.Any(x => categoryWords.Contains(x)))
-        {
+
+        if (capacitorPolarizedKeywords.Any(x => categoryWords.Contains(x)))
             return "Polarized capacitor";
-        }
 
         foreach (var word in categoryWords)
         {
@@ -172,33 +188,62 @@ public static class InventoryMappers
         return "Other";
     }
 
+
     public static (double StandardValue, string StandardUnit, string RawValue) NormalizeComponentValue(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return (0, "", value);
 
+        value = value.Replace('µ', 'u'); // Normalize micro sign
+
         var unitMap = new Dictionary<string, double>
     {
         { "p", 1e-12 }, { "n", 1e-9 }, { "u", 1e-6 }, { "m", 1e-3 },
-        { "k", 1e3 }, { "M", 1e6 }, { "G", 1e9 }
+        { "k", 1e3 }, { "M", 1e6 }, { "G", 1e9 }, { "R", 1 } // R is for ohms
     };
 
-        var match = System.Text.RegularExpressions.Regex.Match(value, @"([0-9.]+)\s*([pnumkMG]?)\s*(Ω|Ohm|F|H)?", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        // 1. Try to match IEC-style values like 22k1, 4R7, 1n2
+        var iecMatch = Regex.Match(value, @"^(\d+)([pnumkMGRR])(\d*)(Ω|Ohm|F|H)?$", RegexOptions.IgnoreCase);
+        if (iecMatch.Success)
+        {
+            string leading = iecMatch.Groups[1].Value;
+            string _multiplier = iecMatch.Groups[2].Value.ToLower(); // lowercase for dictionary
+            string trailing = iecMatch.Groups[3].Value;
+            string unit = iecMatch.Groups[4].Value ?? "";
+
+            if (unit.Equals("Ohm", StringComparison.OrdinalIgnoreCase))
+                unit = "Ω";
+
+            if (unitMap.TryGetValue(_multiplier, out double factor))
+            {
+                string numeric = $"{leading}.{trailing}";
+                if (double.TryParse(numeric, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedValue))
+                {
+                    return (parsedValue * factor, unit, value);
+                }
+            }
+        }
+
+        // 2. Fallback: classic regex with space
+        var match = Regex.Match(value, @"([0-9.,]+)\s*([pnumkMG]?)\s*(Ω|Ohm|F|H)?", RegexOptions.IgnoreCase);
 
         if (!match.Success)
             return (0, "", value);
 
-        double numericValue = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+        string number = match.Groups[1].Value.Replace(",", "").Trim();
         string prefix = match.Groups[2].Value;
-        string unit = match.Groups[3].Value ?? "";
+        string unitSymbol = match.Groups[3].Value ?? "";
 
-        if (unit.Equals("Ohm", StringComparison.OrdinalIgnoreCase))
-            unit = "Ω";
+        if (unitSymbol.Equals("Ohm", StringComparison.OrdinalIgnoreCase))
+            unitSymbol = "Ω";
 
-        if (unitMap.ContainsKey(prefix))
-            numericValue *= unitMap[prefix];
+        if (!double.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out double baseValue))
+            return (0, "", value);
 
-        return (numericValue, unit, value);
+        if (unitMap.TryGetValue(prefix.ToLower(), out double multiplier))
+            baseValue *= multiplier;
+
+        return (baseValue, unitSymbol, value);
     }
 
     private static readonly Dictionary<string, string> CategoryMappings = new()

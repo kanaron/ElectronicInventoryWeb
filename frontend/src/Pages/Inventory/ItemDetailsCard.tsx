@@ -15,7 +15,7 @@ const ItemDetailsCard: React.FC = () => {
   const [qrCode, setQrCode] = useState<string>("");
 
   const [formData, setFormData] = useState<InventoryItem>(
-    inventoryStore.selectedItem || {
+    inventoryStore.selectedItem ?? {
       id: "",
       type: "",
       symbol: "",

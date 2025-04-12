@@ -37,6 +37,9 @@ public class BomController : BaseApiController
             project.UserId = userId;
 
             await Mediator.Send(new AddBomProject.Command { Project = project }, cancellationToken);
+
+            await Mediator.Send(new MatchBomItemsWithInventory.Command { ProjectId = project.Id, UserId = userId }, cancellationToken);
+
             return Ok(new { project.Id, project.Name, project.Category });
         }
         catch (Exception ex)
@@ -55,7 +58,7 @@ public class BomController : BaseApiController
             return Unauthorized("User ID not found in token");
         }
 
-        return await Mediator.Send(new BomItemsList.Query { ProjectId = id }, cancellationToken);
+        return await Mediator.Send(new BomItemsList.Query { ProjectId = id, UserId = userId }, cancellationToken);
     }
 
     [HttpPut]
