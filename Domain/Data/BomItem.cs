@@ -17,5 +17,7 @@ public class BomItem
     public Guid ProjectId { get; set; }
     public Project? Project { get; set; }
 
-    public List<Guid> MatchingInventoryItemIds { get; set; } = new();
+    public List<Guid> MatchingInventoryItemIds { get; set; } = [];
+    public List<Guid> SelectedInventoryItemIds { get; set; } = [];
+
 }

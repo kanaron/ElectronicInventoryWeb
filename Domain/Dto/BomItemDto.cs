@@ -14,4 +14,7 @@ public class BomItemDto
 
     public List<Guid> MatchingInventoryItemIds { get; set; } = [];
     public List<InventoryItemDto> MatchingItems { get; set; } = [];
+
+    public List<Guid> SelectedInventoryItemIds { get; set; } = [];
+
 }

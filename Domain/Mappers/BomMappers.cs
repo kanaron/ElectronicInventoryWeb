@@ -18,7 +18,8 @@ public static class BomMappers
             References = item.References,
             IsPlaced = item.IsPlaced,
             IsRelevant = item.IsRelevant,
-            MatchingInventoryItemIds = item.MatchingInventoryItemIds
+            MatchingInventoryItemIds = item.MatchingInventoryItemIds,
+            SelectedInventoryItemIds = item.SelectedInventoryItemIds
         };
     }
 
@@ -35,7 +36,8 @@ public static class BomMappers
             References = item.References,
             IsPlaced = item.IsPlaced,
             IsRelevant = item.IsRelevant,
-            MatchingInventoryItemIds = item.MatchingInventoryItemIds
+            MatchingInventoryItemIds = item.MatchingInventoryItemIds,
+            SelectedInventoryItemIds = item.SelectedInventoryItemIds
         };
     }
 }

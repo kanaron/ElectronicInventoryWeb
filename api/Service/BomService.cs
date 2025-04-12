@@ -60,8 +60,8 @@ public class BomService : IBomService
             {
                 Id = Guid.NewGuid(),
                 Category = r.Category,
-                Value = rawValue, 
-                StandardValue = standardValue, 
+                Value = rawValue,
+                StandardValue = standardValue,
                 StandardUnit = standardUnit,
                 Package = NormalizeBomFootprint(r.Package, r.References!.First()[0]),
                 References = r.References,
@@ -104,10 +104,9 @@ public class BomService : IBomService
         if (genericSizeMatch.Success)
             return genericSizeMatch.Groups[1].Value;
 
-        return footprint; 
+        return footprint;
     }
 }
-
 
 public class BomItemCsvMap : ClassMap<BomItemDto>
 {

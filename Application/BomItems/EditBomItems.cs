@@ -43,6 +43,7 @@ public class EditBomItems
                 item.IsPlaced = dto.IsPlaced;
 
                 item.MatchingInventoryItemIds = dto.MatchingInventoryItemIds ?? [];
+                item.SelectedInventoryItemIds = dto.SelectedInventoryItemIds ?? [];
             }
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -36,7 +36,7 @@ body {
   margin: 10px !important;
 }
 
-.ui.table tr:nth-child(even) {
+.ui.table tr:nth-child(even):not([style*="background-color"]) {
   background-color: #f9f9f9 !important;
 }
 

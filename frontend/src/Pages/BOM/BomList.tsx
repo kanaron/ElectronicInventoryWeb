@@ -80,7 +80,16 @@ export default observer(function BomList() {
           {bomStore.filteredBomItems.map((item) => (
             <React.Fragment key={item.id}>
               {/* Main Row */}
-              <Table.Row>
+              <Table.Row
+                style={{
+                  backgroundColor:
+                    item.matchingItems.length === 1
+                      ? "#d4edda" // green
+                      : item.matchingItems.length > 1
+                      ? "#fff8dc" // soft yellow (cornsilk)
+                      : "#f8d7da", // light red
+                }}
+              >
                 <TableCell className="references-column">
                   {item.references}
                 </TableCell>
@@ -129,25 +138,59 @@ export default observer(function BomList() {
                     <Table compact celled>
                       <TableHeader>
                         <TableRow>
-                          <Table.HeaderCell content="Symbol" />
-                          <Table.HeaderCell content="Category" />
-                          <Table.HeaderCell content="Value" />
-                          <Table.HeaderCell content="Package" />
-                          <Table.HeaderCell content="Quantity" />
-                          <Table.HeaderCell content="Location" />
+                          <Table.HeaderCell>Priority</Table.HeaderCell>
+                          <Table.HeaderCell>Select</Table.HeaderCell>
+                          <Table.HeaderCell>Symbol</Table.HeaderCell>
+                          <Table.HeaderCell>Category</Table.HeaderCell>
+                          <Table.HeaderCell>Value</Table.HeaderCell>
+                          <Table.HeaderCell>Package</Table.HeaderCell>
+                          <Table.HeaderCell>Quantity</Table.HeaderCell>
+                          <Table.HeaderCell>Location</Table.HeaderCell>
                         </TableRow>
                       </TableHeader>
+
                       <Table.Body>
-                        {item.matchingItems.map((inventoryItem) => (
-                          <Table.Row key={inventoryItem.id}>
-                            <TableCell content={inventoryItem.symbol} />
-                            <TableCell content={inventoryItem.category} />
-                            <TableCell content={inventoryItem.value} />
-                            <TableCell content={inventoryItem.package} />
-                            <TableCell content={inventoryItem.quantity} />
-                            <TableCell content={inventoryItem.location} />
-                          </Table.Row>
-                        ))}
+                        {item.matchingItems.map((inv) => {
+                          const priorityIndex =
+                            item.selectedInventoryItemIds.indexOf(inv.id!);
+                          const isSelected =
+                            item.selectedInventoryItemIds.includes(inv.id!);
+
+                          const toggleSelect = () => {
+                            const current = [...item.selectedInventoryItemIds];
+                            const index = current.indexOf(inv.id!);
+                            if (index >= 0) {
+                              current.splice(index, 1);
+                            } else {
+                              current.push(inv.id!);
+                            }
+                            bomStore.setSelectedInventoryItemIds(
+                              item.id,
+                              current
+                            );
+                          };
+
+                          return (
+                            <Table.Row key={inv.id}>
+                              <TableCell textAlign="center">
+                                {priorityIndex >= 0 ? priorityIndex + 1 : "-"}
+                              </TableCell>
+
+                              <TableCell collapsing>
+                                <Checkbox
+                                  checked={isSelected}
+                                  onChange={toggleSelect}
+                                />
+                              </TableCell>
+                              <TableCell>{inv.symbol}</TableCell>
+                              <TableCell>{inv.category}</TableCell>
+                              <TableCell>{inv.value}</TableCell>
+                              <TableCell>{inv.package}</TableCell>
+                              <TableCell>{inv.quantity}</TableCell>
+                              <TableCell>{inv.location}</TableCell>
+                            </Table.Row>
+                          );
+                        })}
                       </Table.Body>
                     </Table>
                   </TableCell>

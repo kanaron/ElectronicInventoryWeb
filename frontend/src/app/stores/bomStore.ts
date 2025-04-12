@@ -99,4 +99,11 @@ export default class BomStore {
       });
     }
   };
+
+  setSelectedInventoryItemIds = (bomItemId: string, selectedIds: string[]) => {
+    const item = this.bomItems.find((b) => b.id === bomItemId);
+    if (item) {
+      item.selectedInventoryItemIds = selectedIds;
+    }
+  };
 }
