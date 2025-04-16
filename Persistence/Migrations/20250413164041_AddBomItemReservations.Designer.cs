@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250413164041_AddBomItemReservations")]
+    partial class AddBomItemReservations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +38,8 @@ namespace Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IsMatched")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsMatched")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPlaced")
                         .HasColumnType("bit");
@@ -358,13 +361,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a8808e12-3e5f-43d5-ab96-66402235e361",
+                            Id = "9821a475-6db6-45a3-b938-71d929bf72ab",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "42dec592-84c9-4429-ad09-586f8661e467",
+                            Id = "4d84fdd3-ed16-4870-82fa-3f290c42f47f",
                             Name = "User",
                             NormalizedName = "USER"
                         });

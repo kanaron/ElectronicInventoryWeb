@@ -20,5 +20,5 @@ public class BomItem
     public List<Guid> MatchingInventoryItemIds { get; set; } = [];
     public List<Guid> SelectedInventoryItemIds { get; set; } = [];
 
-    public bool IsMatched { get; set; } = false;
+    public int IsMatched { get; set; } = 0;
 }

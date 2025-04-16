@@ -82,11 +82,16 @@ export default observer(function BomList() {
               {/* Main Row */}
               <Table.Row
                 style={{
-                  backgroundColor: !item.isMatched
-                    ? "#ffcccc" // red
-                    : item.matchingItems.length === 1
-                    ? "#d4edda" // green
-                    : "#fff3cd", // yellow
+                  backgroundColor:
+                    item.isMatched === 0
+                      ? "#ffcccc"
+                      : item.isMatched === 1
+                      ? "#fff3cd"
+                      : item.isMatched === 2 ||
+                        item.isMatched === 3 ||
+                        item.isMatched === 4
+                      ? "#d4edda"
+                      : "inherit",
                 }}
               >
                 <TableCell className="references-column">

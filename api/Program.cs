@@ -2,6 +2,7 @@ using API.Interfaces;
 using API.Middleware;
 using API.Service;
 using Application.InventoryItems;
+using Application.Services;
 using Domain.Data;
 using Infrastructure.TmeTokenEncryptionService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
@@ -110,6 +110,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<TmeApiService>();
 builder.Services.AddScoped<IBomService, BomService>();
 builder.Services.AddScoped<ITmeTokenEncryptionService, TmeTokenEncryptionService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 var app = builder.Build();
 

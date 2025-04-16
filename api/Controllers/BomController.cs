@@ -2,6 +2,7 @@
 using Application.BomItems;
 using Application.InventoryItems;
 using Application.Projects;
+using Application.Services;
 using Domain.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +12,12 @@ public class BomController : BaseApiController
 {
     private readonly IBomService _bomService;
 
-    public BomController(IBomService bomService)
+    private readonly IReservationService _reservationService;
+
+    public BomController(IBomService bomService, IReservationService reservationService)
     {
         _bomService = bomService;
+        _reservationService = reservationService;
     }
 
     [HttpPost("[action]")]
@@ -39,6 +43,8 @@ public class BomController : BaseApiController
             await Mediator.Send(new AddBomProject.Command { Project = project }, cancellationToken);
 
             await Mediator.Send(new MatchBomItemsWithInventory.Command { ProjectId = project.Id, UserId = userId }, cancellationToken);
+
+            await _reservationService.ApplyExactReservationsAsync(project.Id, userId, cancellationToken);
 
             return Ok(new { project.Id, project.Name, project.Category });
         }
@@ -66,6 +72,8 @@ public class BomController : BaseApiController
     public async Task<ActionResult<IEnumerable<BomItemDto>>> UpdateBomItems([FromBody] List<BomItemDto> bomItems, CancellationToken cancellationToken)
     {
         await Mediator.Send(new EditBomItems.Command { BomItems = bomItems }, cancellationToken);
+
+        await _reservationService.UpdateReservationsAsync(bomItems, cancellationToken);
 
         return Ok();
     }

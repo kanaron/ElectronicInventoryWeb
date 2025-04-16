@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System.Text.RegularExpressions;
 
 namespace Application.BomItems;
 
@@ -34,8 +33,6 @@ public class MatchBomItemsWithInventory
                 .Where(i => i.UserId == request.UserId)
                 .ToListAsync(cancellationToken);
 
-            var reservations = new Dictionary<Guid, int>();
-
             foreach (var bom in project.BomItems)
             {
                 if (!bom.IsRelevant)
@@ -64,17 +61,10 @@ public class MatchBomItemsWithInventory
                 }
 
                 matchedIds = matches.Select(m => m.Id).ToList();
-                bom.IsMatched = matches.Count > 0;
+                bom.IsMatched = matches.Count <= 0 ? 0 : 
+                                matches.Count == 1 ? 2 : 1;
 
-                if (matches.Count == 1)
-                {
-                    if (!reservations.ContainsKey(matches.First().Id))
-                        reservations[matches.First().Id] = 0;
-
-                    reservations[matches.First().Id] += bom.Quantity;
-                }
-
-                if (!bom.IsMatched)
+                if (bom.IsMatched == 0)
                 {
                     // Fallback to same-category and "Other"
                     var sameCategoryFallback = inventory
@@ -93,22 +83,13 @@ public class MatchBomItemsWithInventory
 
                 bom.MatchingInventoryItemIds = matchedIds;
 
-                if (bom.IsMatched && matchedIds.Count == 1)
+                if (bom.IsMatched == 2 && matchedIds.Count == 1)
                 {
                     bom.SelectedInventoryItemIds = [matchedIds[0]];
                 }
                 else
                 {
                     bom.SelectedInventoryItemIds = [];
-                }
-            }
-
-            foreach (var kvp in reservations)
-            {
-                var inventoryItem = inventory.FirstOrDefault(i => i.Id == kvp.Key);
-                if (inventoryItem != null)
-                {
-                    inventoryItem.ReservedForProjects += kvp.Value;
                 }
             }
 

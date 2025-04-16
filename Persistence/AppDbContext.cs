@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace Persistence;
 
@@ -13,6 +14,8 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<BomItem> BomItems { get; set; }
 
     public DbSet<Project> Projects { get; set; }
+
+    public DbSet<BomItemReservation> BomItemReservations { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -70,7 +73,19 @@ public class AppDbContext : IdentityDbContext<User>
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(Guid.Parse)
-                    .ToList()
-            );
+                .ToList()
+        );
+
+        builder.Entity<BomItemReservation>()
+        .HasOne(r => r.BomItem)
+        .WithMany()
+        .HasForeignKey(r => r.BomItemId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<BomItemReservation>()
+            .HasOne(r => r.InventoryItem)
+            .WithMany()
+            .HasForeignKey(r => r.InventoryItemId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
