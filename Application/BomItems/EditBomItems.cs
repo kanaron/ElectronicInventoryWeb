@@ -65,17 +65,33 @@ public class EditBomItems
                 {
                     var reservations = await _context.BomItemReservations
                         .Where(r => r.BomItemId == item.Id)
+                        .OrderBy(r => item.SelectedInventoryItemIds.IndexOf(r.InventoryItemId))
                         .ToListAsync(cancellationToken);
 
-                    foreach (var reservation in reservations)
-                    {
-                        var inventoryItem = await _context.InventoryItems
-                            .FirstOrDefaultAsync(i => i.Id == reservation.InventoryItemId, cancellationToken);
+                    int remainingLost = item.LostQuantity;
 
-                        if (inventoryItem != null)
+                    if (remainingLost > 0)
+                    {
+                        foreach (var reservation in reservations)
                         {
-                            inventoryItem.Quantity -= (reservation.ReservedQuantity + item.LostQuantity);
-                            inventoryItem.ReservedForProjects -= reservation.ReservedQuantity;
+                            var inventoryItem = await _context.InventoryItems
+                                .FirstOrDefaultAsync(i => i.Id == reservation.InventoryItemId, cancellationToken);
+
+                            if (inventoryItem != null)
+                            {
+                                inventoryItem.Quantity -= reservation.ReservedQuantity;
+                                inventoryItem.ReservedForProjects -= reservation.ReservedQuantity;
+
+                                if (remainingLost > 0)
+                                {
+                                    int lossToApply = Math.Min(remainingLost, inventoryItem.Quantity);
+                                    inventoryItem.Quantity -= lossToApply;
+                                    remainingLost -= lossToApply;
+                                }
+                            }
+
+                            if (remainingLost <= 0)
+                                break;
                         }
                     }
 
