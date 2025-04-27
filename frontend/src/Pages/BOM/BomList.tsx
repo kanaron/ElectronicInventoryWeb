@@ -114,16 +114,32 @@ export default observer(function BomList() {
                   />
                 </TableCell>
                 <TableCell>
-                  <input
-                    type="number"
-                    min={0}
-                    value={item.lostQuantity ?? 0}
-                    style={{ width: "60px" }}
-                    onChange={(e) => {
-                      const updated = parseInt(e.target.value, 10);
-                      item.lostQuantity = isNaN(updated) ? 0 : updated;
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                  />
+                  >
+                    <input
+                      type="number"
+                      min="0"
+                      value={item.lostQuantity ?? 0}
+                      onChange={(e) => {
+                        const updated = parseInt(e.target.value, 10);
+                        item.lostQuantity = isNaN(updated) ? 0 : updated;
+                      }}
+                      style={{
+                        width: "60px",
+                        padding: "4px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                        textAlign: "center",
+                        backgroundColor: "#f9f9f9",
+                        color: "#333",
+                      }}
+                    />
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Checkbox
