@@ -72,6 +72,7 @@ export default observer(function BomList() {
             <Table.HeaderCell content="Quantity" />
             <Table.HeaderCell content="Description" />
             <Table.HeaderCell content="Is relevant" />
+            <Table.HeaderCell content="Lost" />
             <Table.HeaderCell content="Is placed" />
           </TableRow>
         </TableHeader>
@@ -110,6 +111,18 @@ export default observer(function BomList() {
                   <Checkbox
                     checked={item.isRelevant}
                     onChange={() => bomStore.toggleRelevance(item.id)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <input
+                    type="number"
+                    min={0}
+                    value={item.lostQuantity ?? 0}
+                    style={{ width: "60px" }}
+                    onChange={(e) => {
+                      const updated = parseInt(e.target.value, 10);
+                      item.lostQuantity = isNaN(updated) ? 0 : updated;
+                    }}
                   />
                 </TableCell>
                 <TableCell>

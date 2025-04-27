@@ -14,4 +14,5 @@ export interface BomItem {
   matchingItems: InventoryItem[];
   selectedInventoryItemIds: string[];
   isMatched: number;
+  lostQuantity: number;
 }

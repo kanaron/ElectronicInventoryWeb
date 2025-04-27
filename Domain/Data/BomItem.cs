@@ -13,6 +13,7 @@ public class BomItem
     public string? Description { get; set; }
     public bool IsRelevant { get; set; } = true;
     public bool IsPlaced { get; set; } = false;
+    public int LostQuantity { get; set; } = 0;
 
     public Guid ProjectId { get; set; }
     public Project? Project { get; set; }

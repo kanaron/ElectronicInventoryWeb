@@ -21,6 +21,7 @@ public static class BomMappers
             MatchingInventoryItemIds = item.MatchingInventoryItemIds,
             SelectedInventoryItemIds = item.SelectedInventoryItemIds,
             IsMatched = item.IsMatched,
+            LostQuantity = item.LostQuantity,
         };
     }
 
@@ -40,6 +41,7 @@ public static class BomMappers
             MatchingInventoryItemIds = item.MatchingInventoryItemIds,
             SelectedInventoryItemIds = item.SelectedInventoryItemIds,
             IsMatched = item.IsMatched,
+            LostQuantity= item.LostQuantity,
         };
     }
 }

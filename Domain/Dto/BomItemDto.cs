@@ -11,6 +11,7 @@ public class BomItemDto
     public string? Description { get; set; }
     public bool IsRelevant { get; set; } = true;
     public bool IsPlaced { get; set; } = false;
+    public int LostQuantity { get; set; } = 0;
 
     public List<Guid> MatchingInventoryItemIds { get; set; } = [];
     public List<InventoryItemDto> MatchingItems { get; set; } = [];

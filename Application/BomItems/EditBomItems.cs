@@ -40,7 +40,7 @@ public class EditBomItems
                 item.Quantity = dto.Quantity;
                 item.Description = dto.Description;
                 item.IsRelevant = dto.IsRelevant;
-                item.IsPlaced = dto.IsPlaced;
+                item.LostQuantity = dto.LostQuantity;
 
                 item.MatchingInventoryItemIds = dto.MatchingInventoryItemIds ?? [];
                 item.SelectedInventoryItemIds = dto.SelectedInventoryItemIds ?? [];
@@ -60,6 +60,27 @@ public class EditBomItems
                     "exact" => 2,
                     _ => item.IsMatched 
                 };
+
+                if (!item.IsPlaced && dto.IsPlaced)
+                {
+                    var reservations = await _context.BomItemReservations
+                        .Where(r => r.BomItemId == item.Id)
+                        .ToListAsync(cancellationToken);
+
+                    foreach (var reservation in reservations)
+                    {
+                        var inventoryItem = await _context.InventoryItems
+                            .FirstOrDefaultAsync(i => i.Id == reservation.InventoryItemId, cancellationToken);
+
+                        if (inventoryItem != null)
+                        {
+                            inventoryItem.Quantity -= (reservation.ReservedQuantity + item.LostQuantity);
+                            inventoryItem.ReservedForProjects -= reservation.ReservedQuantity;
+                        }
+                    }
+
+                    item.IsPlaced = true;
+                }
             }
 
             await _context.SaveChangesAsync(cancellationToken);
