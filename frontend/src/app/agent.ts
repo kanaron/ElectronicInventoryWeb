@@ -119,6 +119,11 @@ const BomItems = {
   update: (items: BomItem[]) => axios.put(`/Bom/UpdateBomItems`, items),
 };
 
+const Dashboard = {
+  getMissingParts: () => requests.get<BomItem[]>("/Dashboard/MissingParts"),
+  getLowStockItems: () => requests.get<InventoryItem[]>("/Dashboard/LowStock"),
+};
+
 const Account = {
   current: () => requests.get<User>("/Account"),
   login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
@@ -132,6 +137,7 @@ const agent = {
   Account,
   Projects,
   BomItems,
+  Dashboard,
 };
 
 export default agent;
