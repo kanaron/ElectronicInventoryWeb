@@ -19,6 +19,45 @@ public class TmeApiService
         _configuration = config;
     }
 
+    public async Task<List<ProductWithDescription>> SearchProductsAsync(string token, string searchTerm)
+    {
+        var queryParams = new Dictionary<string, string>
+    {
+        { "Token", token },
+        { "Country", "PL" },
+        { "Language", "EN" },
+        { "SearchPlain", searchTerm },
+        { "SearchWithStock", "true" }
+    };
+
+        var response = await ApiCall("Products/Search", queryParams);
+        if (!IsStatusOK(response, out _)) return new();
+
+        var parsed = JsonConvert.DeserializeObject<GetDescriptionJResult>(response);
+        return parsed?.Data?.ProductList ?? new();
+    }
+
+    public async Task<List<ProductWithPrices>> GetPricesAndStocksAsync(string token, List<string> symbols)
+    {
+        var queryParams = new Dictionary<string, string>
+    {
+        { "Token", token },
+        { "Country", "PL" },
+        { "Language", "EN" },
+        { "Currency", "PLN" },
+        { "GrossPrices", "true" }
+    };
+
+        for (int i = 0; i < symbols.Count && i < 50; i++)
+            queryParams[$"SymbolList[{i}]"] = symbols[i];
+
+        var response = await ApiCall("Products/GetPricesAndStocks", queryParams);
+        if (!IsStatusOK(response, out _)) return new();
+
+        var parsed = JsonConvert.DeserializeObject<ApiResult<GetPricesAndStocksData>>(response);
+        return parsed?.Data?.ProductList ?? new();
+    }
+
     public async Task<ProductWithParameters?> GetProductWithParametersAsync(string token, string symbol)
     {
         var queryParams = new Dictionary<string, string>
