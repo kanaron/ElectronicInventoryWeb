@@ -1,4 +1,5 @@
-﻿using Domain.Dto;
+﻿using Application.Services;
+using Domain.Dto;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -26,17 +27,17 @@ public class GetPurchaseSuggestions
 
         public async Task<List<PurchaseSuggestionDto>> Handle(Query request, CancellationToken ct)
         {
-            var userInventory = await _context.InventoryItems
+            var userInventory = _context.InventoryItems
                 .Where(x => x.UserId == request.UserId)
-                .ToListAsync(ct);
+                .ToList();
 
-            var bomItems = await _context.BomItems
+            var bomItems = _context.BomItems
                 .Include(b => b.Project)
                 .Where(b =>
                     b.Project.UserId == request.UserId &&
                     b.IsRelevant &&
                     !b.IsPlaced)
-                .ToListAsync(ct);
+                .ToList();
 
             var result = new List<PurchaseSuggestionDto>();
 
@@ -50,16 +51,25 @@ public class GetPurchaseSuggestions
                 if (available >= bom.Quantity)
                     continue;
 
-                string searchTerm = $"{bom.Category} {bom.Value} {bom.Package}";
+                string searchTerm = $"{bom.Value} {bom.Package}";
                 var products = await _tme.SearchProductsAsync(request.Token, searchTerm);
 
                 var filtered = products
                     .Where(p => p.ProductStatusList == null || !p.ProductStatusList.Any(
                         status => status is "CANNOT_BE_ORDERED" or "INVALID" or "NOT_IN_OFFER"))
-                    .Take(20)
                     .ToList();
 
-                if (!filtered.Any()) continue;
+                if (!filtered.Any())
+                {
+                    result.Add(new PurchaseSuggestionDto
+                    {
+                        BomValue = bom.Value,
+                        Package = bom.Package,
+                        QuantityNeeded = bom.Quantity,
+                        Suggestions = new List<TmeSuggestionDto>() // empty list so frontend can still display it
+                    });
+                    continue;
+                }
 
                 var symbols = filtered.Select(p => p.Symbol).Where(s => !string.IsNullOrWhiteSpace(s)).Take(50).ToList();
                 var priceList = await _tme.GetPricesAndStocksAsync(request.Token, symbols);
@@ -69,7 +79,7 @@ public class GetPurchaseSuggestions
                 foreach (var desc in filtered)
                 {
                     var priceData = priceList.FirstOrDefault(p => p.Symbol == desc.Symbol);
-                    if (priceData?.PriceList == null || priceData.PriceList.Count == 0)
+                    if ((priceData?.PriceList == null) || (priceData.PriceList.Count() == 0))
                         continue;
 
                     var quantity = bom.Quantity;
@@ -91,29 +101,38 @@ public class GetPurchaseSuggestions
 
                     decimal finalTotal;
                     int qtyToOrder;
+                    int? nextQty = null;
+                    decimal? nextPrice = null;
 
                     if (currentTotal <= nextTotal)
                     {
                         finalTotal = currentTotal;
                         qtyToOrder = quantity;
+                        if (nextTier != null)
+                        {
+                            nextQty = nextTier.Amount;
+                            nextPrice = (decimal)(nextTier.PriceValue * nextTier.Amount);
+                        }
                     }
                     else
                     {
                         finalTotal = nextTotal;
-                        qtyToOrder = nextTier.Amount;
+                        qtyToOrder = nextTier!.Amount;
                     }
 
                     suggestions.Add((
-                        new TmeSuggestionDto
-                        {
-                            Symbol = desc.Symbol ?? "",
-                            Description = desc.Description ?? "",
-                            Url = desc.ProductInformationPage ?? "",
-                            Currency = "PLN",
-                            QuantityToOrder = qtyToOrder,
-                            TotalCost = Math.Round(finalTotal, 2)
-                        },
-                        finalTotal
+                new TmeSuggestionDto
+                {
+                    Symbol = desc.Symbol ?? "",
+                    Description = desc.Description ?? "",
+                    Url = (desc.ProductInformationPage ?? "").Replace("www.tme.eu/en", "www.tme.eu/pl/en"),
+                    Currency = "PLN",
+                    QuantityToOrder = qtyToOrder,
+                    TotalCost = Math.Round(finalTotal, 2),
+                    NextPriceBreakQuantity = nextQty,
+                    NextPriceBreakUnitPrice = nextPrice.HasValue ? Math.Round(nextPrice.Value, 2) : null
+                },
+                finalTotal
                     ));
                 }
 
@@ -138,6 +157,7 @@ public class GetPurchaseSuggestions
 
                 result.Add(new PurchaseSuggestionDto
                 {
+                    Category = bom.Category,
                     BomValue = bom.Value,
                     Package = bom.Package,
                     QuantityNeeded = bom.Quantity,
@@ -145,7 +165,11 @@ public class GetPurchaseSuggestions
                 });
             }
 
-            return result;
+            return result
+            .OrderBy(r => r.Suggestions.Count == 0) // false < true → matched items come first
+            .ThenBy(r => r.Package) // optional grouping: capacitors, resistors, etc.
+            .ToList();
+
         }
     }
 }

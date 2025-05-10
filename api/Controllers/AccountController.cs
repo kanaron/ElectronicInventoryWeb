@@ -1,6 +1,6 @@
-﻿using API.Interfaces;
-using API.Models;
+﻿using API.Models;
 using Application.Account;
+using Application.Interfaces;
 using Domain.Data;
 using Domain.Dto;
 using Infrastructure.TmeTokenEncryptionService;

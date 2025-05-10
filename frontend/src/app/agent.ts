@@ -7,6 +7,7 @@ import { router } from "./router/Routes";
 import { ServerError } from "../models/serverError";
 import { ProjectItem } from "../models/projectItem";
 import { BomItem } from "../models/BomItem";
+import { PurchaseSuggestion } from "../models/PurchaseSuggestion";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -124,6 +125,11 @@ const Dashboard = {
   getLowStockItems: () => requests.get<InventoryItem[]>("/Dashboard/LowStock"),
 };
 
+const Purchase = {
+  getSuggestions: () =>
+    requests.get<PurchaseSuggestion[]>("/Purchase/PurchaseSuggestions"),
+};
+
 const Account = {
   current: () => requests.get<User>("/Account"),
   login: (user: UserFormValues) => requests.post<User>("/Account/login", user),
@@ -138,6 +144,7 @@ const agent = {
   Projects,
   BomItems,
   Dashboard,
+  Purchase,
 };
 
 export default agent;

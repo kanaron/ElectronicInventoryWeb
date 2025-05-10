@@ -2,6 +2,7 @@
 
 public class PurchaseSuggestionDto
 {
+    public string Category { get; set; }
     public string BomValue { get; set; }
     public string Package { get; set; }
     public int QuantityNeeded { get; set; }
@@ -16,5 +17,7 @@ public class TmeSuggestionDto
     public int QuantityToOrder { get; set; }
     public string Currency { get; set; }
     public string Url { get; set; }
-}
 
+    public int? NextPriceBreakQuantity { get; set; }
+    public decimal? NextPriceBreakUnitPrice { get; set; }
+}

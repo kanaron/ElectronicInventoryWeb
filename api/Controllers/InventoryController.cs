@@ -1,5 +1,5 @@
-﻿using API.Service;
-using Application.InventoryItems;
+﻿using Application.InventoryItems;
+using Application.Services;
 using Domain.Dto;
 using Domain.Mappers;
 using Infrastructure.TmeTokenEncryptionService;

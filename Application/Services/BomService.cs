@@ -1,14 +1,15 @@
-﻿using API.Interfaces;
+﻿using Application.Interfaces;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Domain.Data;
 using Domain.Dto;
 using Domain.Mappers;
+using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace API.Service;
+namespace Application.Services;
 
 public class BomService : IBomService
 {

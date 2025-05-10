@@ -1,6 +1,7 @@
 ﻿using Domain.Data;
+using Microsoft.AspNetCore.Http;
 
-namespace API.Interfaces;
+namespace Application.Interfaces;
 
 public interface IBomService
 {

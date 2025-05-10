@@ -1,6 +1,5 @@
-using API.Interfaces;
 using API.Middleware;
-using API.Service;
+using Application.Interfaces;
 using Application.InventoryItems;
 using Application.Services;
 using Domain.Data;

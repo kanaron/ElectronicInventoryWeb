@@ -1,6 +1,6 @@
 ﻿using Domain.Data;
 
-namespace API.Interfaces;
+namespace Application.Interfaces;
 
 public interface ITokenService
 {

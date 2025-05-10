@@ -7,8 +7,9 @@ using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Domain.TmeJResults;
 using Domain.TmeModels;
+using Microsoft.Extensions.Configuration;
 
-namespace API.Service;
+namespace Application.Services;
 
 public class TmeApiService
 {
@@ -39,23 +40,57 @@ public class TmeApiService
 
     public async Task<List<ProductWithPrices>> GetPricesAndStocksAsync(string token, List<string> symbols)
     {
-        var queryParams = new Dictionary<string, string>
-    {
-        { "Token", token },
-        { "Country", "PL" },
-        { "Language", "EN" },
-        { "Currency", "PLN" },
-        { "GrossPrices", "true" }
-    };
+        var validSymbols = symbols
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Distinct()
+            .ToList();
 
-        for (int i = 0; i < symbols.Count && i < 50; i++)
-            queryParams[$"SymbolList[{i}]"] = symbols[i];
+        var allResults = new List<ProductWithPrices>();
 
-        var response = await ApiCall("Products/GetPricesAndStocks", queryParams);
-        if (!IsStatusOK(response, out _)) return new();
+        const int batchSize = 5;
 
-        var parsed = JsonConvert.DeserializeObject<ApiResult<GetPricesAndStocksData>>(response);
-        return parsed?.Data?.ProductList ?? new();
+        for (int i = 0; i < validSymbols.Count; i += batchSize)
+        {
+            var batch = validSymbols.Skip(i).Take(batchSize).ToList();
+
+            var queryParams = new Dictionary<string, string>
+        {
+            { "Token", token },
+            { "Country", "PL" },
+            { "Language", "EN" },
+            { "Currency", "PLN" }
+        };
+
+            for (int j = 0; j < batch.Count; j++)
+            {
+                queryParams[$"SymbolList[{j}]"] = batch[j];
+            }
+
+            // Clean signature from previous calls
+            queryParams.Remove("ApiSignature");
+
+            var response = await ApiCall("Products/GetPricesAndStocks", queryParams);
+
+            if (!IsStatusOK(response, out var error))
+            {
+                Console.WriteLine($"TME API error in batch {i / batchSize}: {error?.Error}");
+                continue; // Skip batch on error
+            }
+
+            var parsed = JsonConvert.DeserializeObject<ApiResult<GetPricesAndStocksData>>(response);
+            var batchResult = parsed?.Data?.ProductList ?? new();
+
+            // Convert to gross
+            foreach (var product in batchResult)
+            {
+                foreach (var price in product.PriceList)
+                    price.PriceValue *= (1 + product.VatRate / 100.0f);
+            }
+
+            allResults.AddRange(batchResult);
+        }
+
+        return allResults;
     }
 
     public async Task<ProductWithParameters?> GetProductWithParametersAsync(string token, string symbol)
@@ -141,31 +176,52 @@ public class TmeApiService
         };
     }
 
-    private async Task<string> ApiCall(string action, Dictionary<string, string> apiParams)
+    private async Task<string> ApiCall(string action, Dictionary<string, string> inputParams)
     {
-        // All code in this function is based on documentation https://developers.tme.eu/en/
+        string uri = $"https://api.tme.eu/{action}.json";
 
-        string uri = $@"https://api.tme.eu/{action}.json";
+        // Step 1: Clone and clean input
+        var signingParams = inputParams
+            .Where(kv => kv.Key != "ApiSignature")
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
 
-        // Encode and normalize params
-        FormUrlEncodedContent urlEncodedContent = new(apiParams);
-        string encodedParams = await urlEncodedContent.ReadAsStringAsync();
+        // Step 2: Normalize and escape for signature
+        var normalizedParams = signingParams
+            .OrderBy(kv => kv.Key, StringComparer.Ordinal)
+            .Select(kv =>
+            {
+                var key = Uri.EscapeDataString(kv.Key)
+                    .Replace("%5b", "%5B")
+                    .Replace("%5d", "%5D");
 
-        // Calculate signature basis according the documentation
-        string escapedUri = UrlEncode(uri);
-        string escapedParams = UrlEncode(encodedParams);
+                var value = Uri.EscapeDataString(kv.Value)
+                    .Replace("+", "%20");
+
+                return $"{key}={value}";
+            });
+
+        string paramString = string.Join("&", normalizedParams);
+        string escapedUri = Uri.EscapeDataString(uri).Replace("+", "%20");
+        string escapedParams = Uri.EscapeDataString(paramString).Replace("+", "%20");
         string signatureBase = $"POST&{escapedUri}&{escapedParams}";
 
-        // Calculate HMAC-SHA1 from signature and encode by Base64 function
-        byte[] hmacSha1 = HashHmac(signatureBase, _configuration["TME:AppSecret"]!);
-        string apiSignature = Convert.ToBase64String(hmacSha1);
+        // Step 3: Sign
+        var keyBytes = Encoding.ASCII.GetBytes(_configuration["TME:AppSecret"]!);
+        var dataBytes = Encoding.ASCII.GetBytes(signatureBase);
+        using var hmac = new HMACSHA1(keyBytes);
+        var hash = hmac.ComputeHash(dataBytes);
+        var apiSignature = Convert.ToBase64String(hash);
 
-        // Add ApiSignature to params
-        apiParams.Add("ApiSignature", apiSignature);
-        // Send POST message and return .json content as result
-        var result = await SendMessage(uri, new FormUrlEncodedContent(apiParams));
+        // Step 4: Add signature to original raw params
+        var finalParams = new Dictionary<string, string>(signingParams)
+        {
+            ["ApiSignature"] = apiSignature
+        };
 
-        return result;
+        // Step 5: Build the form with raw (unescaped) values — .NET escapes them the same way we signed
+        using var content = new FormUrlEncodedContent(finalParams);
+
+        return await SendMessage(uri, content);
     }
 
     public bool IsStatusOK(string jsonContent, out ErrorResult errorResult)

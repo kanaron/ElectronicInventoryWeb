@@ -9,6 +9,7 @@ import ServerErrors from "../../Pages/errors/ServerErrors";
 import ProjectsPage from "../../Pages/Projects/ProjectsPage";
 import BomPage from "../../Pages/BOM/BomPage";
 import UserSettingsPage from "../../Pages/User/UserSettingsPage";
+import FindAndPurchasePage from "../../Pages/Purchase/FindAndPurchasePage";
 
 export const routes: RouteObject[] = [
   {
@@ -23,6 +24,7 @@ export const routes: RouteObject[] = [
       { path: "userSettings", element: <UserSettingsPage /> },
       { path: "login", element: <LoginForm /> },
       { path: "register", element: <RegisterForm /> },
+      { path: "suggestions", element: <FindAndPurchasePage /> },
       { path: "server-error", element: <ServerErrors /> },
     ],
   },
