@@ -63,6 +63,7 @@ public class GetPurchaseSuggestions
                 {
                     result.Add(new PurchaseSuggestionDto
                     {
+                        Category = bom.Category,
                         BomValue = bom.Value,
                         Package = bom.Package,
                         QuantityNeeded = bom.Quantity,
