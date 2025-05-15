@@ -58,41 +58,39 @@ public class EditBomItems
                     "none" => item.SelectedInventoryItemIds.Any() ? 3 : 0,
                     "multi" => item.SelectedInventoryItemIds.Any() ? 4 : 1,
                     "exact" => 2,
-                    _ => item.IsMatched 
+                    _ => item.IsMatched
                 };
 
                 if (!item.IsPlaced && dto.IsPlaced)
                 {
-                    var reservations = await _context.BomItemReservations
+                    var reservations = (await _context.BomItemReservations
                         .Where(r => r.BomItemId == item.Id)
+                        .ToListAsync(cancellationToken))
                         .OrderBy(r => item.SelectedInventoryItemIds.IndexOf(r.InventoryItemId))
-                        .ToListAsync(cancellationToken);
+                        .ToList();
 
                     int remainingLost = item.LostQuantity;
 
-                    if (remainingLost > 0)
+                    foreach (var reservation in reservations)
                     {
-                        foreach (var reservation in reservations)
+                        var inventoryItem = await _context.InventoryItems
+                            .FirstOrDefaultAsync(i => i.Id == reservation.InventoryItemId, cancellationToken);
+
+                        if (inventoryItem != null)
                         {
-                            var inventoryItem = await _context.InventoryItems
-                                .FirstOrDefaultAsync(i => i.Id == reservation.InventoryItemId, cancellationToken);
+                            inventoryItem.Quantity -= reservation.ReservedQuantity;
+                            inventoryItem.ReservedForProjects -= reservation.ReservedQuantity;
 
-                            if (inventoryItem != null)
+                            if (remainingLost > 0)
                             {
-                                inventoryItem.Quantity -= reservation.ReservedQuantity;
-                                inventoryItem.ReservedForProjects -= reservation.ReservedQuantity;
-
-                                if (remainingLost > 0)
-                                {
-                                    int lossToApply = Math.Min(remainingLost, inventoryItem.Quantity);
-                                    inventoryItem.Quantity -= lossToApply;
-                                    remainingLost -= lossToApply;
-                                }
+                                int lossToApply = Math.Min(remainingLost, inventoryItem.Quantity);
+                                inventoryItem.Quantity -= lossToApply;
+                                remainingLost -= lossToApply;
                             }
-
-                            if (remainingLost <= 0)
-                                break;
                         }
+
+                        if (remainingLost <= 0)
+                            continue;
                     }
 
                     item.IsPlaced = true;
