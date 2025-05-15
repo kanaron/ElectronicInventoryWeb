@@ -57,10 +57,22 @@ public class BomService : IBomService
         {
             var (standardValue, standardUnit, rawValue) = InventoryMappers.NormalizeComponentValue(r.Value);
 
+            var autoCategory = r.Category;
+
+            if (!string.IsNullOrWhiteSpace(autoCategory))
+            {
+                var lowered = autoCategory.ToLowerInvariant();
+
+                if (lowered.Contains("mosfet") || lowered.Contains("transistor") || lowered.Contains("fet"))
+                {
+                    autoCategory = "Transistor";
+                }
+            }
+
             return new BomItem
             {
                 Id = Guid.NewGuid(),
-                Category = r.Category,
+                Category = autoCategory,
                 Value = rawValue,
                 StandardValue = standardValue,
                 StandardUnit = standardUnit,
