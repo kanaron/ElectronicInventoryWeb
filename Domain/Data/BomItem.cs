@@ -8,7 +8,7 @@ public class BomItem
     public double StandardValue { get; set; }
     public string StandardUnit { get; set; } = string.Empty;
     public string Package { get; set; } = string.Empty;
-    public string[]? References { get; set; } = [];
+    public string References { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public string? Description { get; set; }
     public bool IsRelevant { get; set; } = true;

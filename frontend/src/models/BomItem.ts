@@ -5,7 +5,7 @@ export interface BomItem {
   category: string;
   value: string;
   package: string;
-  references: string[];
+  references: string;
   quantity: number;
   description: string;
   isRelevant: boolean;

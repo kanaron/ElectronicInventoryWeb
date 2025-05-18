@@ -6,7 +6,7 @@ public class BomItemDto
     public string Category { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
     public string Package { get; set; } = string.Empty;
-    public string[]? References { get; set; } = [];
+    public string References { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public string? Description { get; set; }
     public bool IsRelevant { get; set; } = true;

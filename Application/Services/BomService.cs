@@ -76,7 +76,7 @@ public class BomService : IBomService
                 Value = rawValue,
                 StandardValue = standardValue,
                 StandardUnit = standardUnit,
-                Package = NormalizeBomFootprint(r.Package, r.References!.First()[0]),
+                Package = NormalizeBomFootprint(r.Package, r.References![0]),
                 References = r.References,
                 Quantity = r.Quantity,
                 Description = r.Description,
@@ -128,11 +128,7 @@ public class BomItemCsvMap : ClassMap<BomItemDto>
         Map(m => m.Category).Name("Description");
         Map(m => m.Value).Name("Value");
         Map(m => m.Package).Name("Footprint");
-
-        Map(m => m.References).Convert(row =>
-            row.Row.GetField("Reference")?.Split(',').Select(r => r.Trim()).ToArray() ?? []
-        );
-
+        Map(m => m.References).Name("Reference");
         Map(m => m.Quantity).Name("Qty");
         Map(m => m.Description).Name("Description");
     }
