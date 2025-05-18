@@ -133,4 +133,23 @@ public class ReservationService : IReservationService
 
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task RemoveReservationsForProjectAsync(Guid projectId, CancellationToken cancellationToken)
+    {
+        var reservations = await _context.BomItemReservations
+            .Where(r => r.BomItem.ProjectId == projectId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var res in reservations)
+        {
+            var inv = await _context.InventoryItems.FindAsync(res.InventoryItemId);
+            if (inv != null)
+            {
+                inv.ReservedForProjects -= res.ReservedQuantity;
+            }
+        }
+
+        _context.BomItemReservations.RemoveRange(reservations);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
