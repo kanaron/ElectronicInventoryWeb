@@ -57,7 +57,7 @@ export default observer(function BomList() {
               ? i.references
               : i.references
                   .split(",")
-                  .map((s) => s.replace(/[\[\]\s"]/g, "").trim())
+                  .map((s) => s.replace(/[[\]\s"]/g, "").trim())
           )
           .filter(Boolean)
           .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
